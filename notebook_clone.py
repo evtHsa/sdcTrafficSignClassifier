@@ -6,14 +6,16 @@ import pdb
 
 # support code
 import tsc_util as tscu
-import tsc_datadict as dd
+import tsc_datadict as tsc_dd
 
 #step 0
 # Load pickled data
 import pickle
     
 # TODO: Fill this in based on where you saved the training and testing data
-dd = dd.DataDict().get_dict()
+DD = tsc_dd.DataDict()
+dd = DD.get_dict()
+print("FIXME: the above is a bit stupid")
 
 ### Replace each question mark with the appropriate value. 
 ### Use python, pandas or numpy methods rather than hard coding the results
@@ -40,13 +42,11 @@ print("Number of training examples =", n_train)
 print("Number of validation examples =", n_validation)
 print("Number of testing examples =", n_test)
 print("Image data shape =", image_shape)
-print("Number of classes =", dd['n_classes'])
+print("Number of classes =", DD.n_classes)
 
 sn_dict = tscu.get_id2name_dict()
-assert("FIXME:change the signature" == None)
 
-signs_by_set_by_id = tscu.organize_signs_by_id([(dd['train']['y'], 'train'), (dd['valid']['y'], 'valid'),
-                                              (dd['test']['y'], 'test')], n_classes)
+signs_by_set_by_id = DD.signs_by_id
 
 assert("FIXME:change the signature" == None)
 
