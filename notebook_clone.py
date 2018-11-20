@@ -13,7 +13,8 @@ import tsc_datadict as tsc_dd
 import pickle
     
 # TODO: Fill this in based on where you saved the training and testing data
-DD = tsc_dd.DataDict(show_sample=True, show_distrib=True)
+#DD = tsc_dd.DataDict(show_sample=True, show_distrib=True)
+DD = tsc_dd.DataDict()
 
 ### Replace each question mark with the appropriate value. 
 ### Use python, pandas or numpy methods rather than hard coding the results

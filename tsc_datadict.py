@@ -99,6 +99,22 @@ class DataDict:
         for set_name in self.get_set_names():
             self.show_distribution(set_name)
 
+    def normalize_images_of_set(self, set_name):
+        f = lambda img: (img - 128.) / 128.
+        pdb.set_trace()
+        self.dd[set_name]['X'] = [f(img)
+                                  for img in self.dd[set_name]['X']]
+        print("hey")
+        
+    def normalize_images(self):
+        # do this after displaying the sample signs
+        for set_name in self.get_set_names():
+            self.normalize_images_of_set(set_name)
+
+    def preprocess_images(self):
+        self.normalize_images()
+        
+
     def __init__(self, show_sample=False, show_distrib=False):
         self.data_dir = "traffic-signs-data"
         self.dd = dict()
@@ -113,4 +129,5 @@ class DataDict:
             self.show_sample_signs()
         if show_distrib:
             self.show_distributions()
+        self.preprocess_images()
                                           
