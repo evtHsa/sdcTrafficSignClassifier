@@ -63,14 +63,17 @@ class DataDict:
         return rows, cols
     
     def show_sample_signs(self):
+        # FIXME: this fn still needs help. too many poorly understood plot paramters
+        # but it works for nwo
         # https://matplotlib.org/gallery/subplots_axes_and_figures/figure_title.html
-         #https://stackoverflow.com/questions/10351565/how-do-i-fit-long-title
+        #https://stackoverflow.com/questions/10351565/how-do-i-fit-long-title
+
         img_side = 32 #FIXME: we should calc this in ctor and make as attr
         rows, cols = self.sample_grid_dims()
         font_size = 10 # FIXME:hardcoded badness
-        text_width_char = 20
-        fig_height = 48
-        fig_width = 48
+        text_width_char = 22
+        fig_height = 24
+        fig_width = 24
         
         plt.figure(1, figsize=(fig_height, fig_width))
         for i in range(len(self.sample_signs)):
@@ -81,7 +84,7 @@ class DataDict:
                       fontsize=font_size)
             plt.imshow(img)
             plt.axis('off')
-        plt.tight_layout(pad=3., w_pad=2., h_pad=2.0)
+        plt.tight_layout(pad=3., w_pad=1., h_pad=4.0)
         plt.show()
         pdb.set_trace()
 
