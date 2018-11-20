@@ -20,7 +20,6 @@ class DataDict:
     def __init__(self):
         self.dd = dict()
         for set_name in self.get_set_names():
-            print("\t set_name = " + set_name)
             pd = tscu.get_pickle_dict(set_name)
             self.dd[set_name] = { 'X' : pd['features'], 'y' : pd['labels']}
         self.set_n_classes()
