@@ -81,7 +81,7 @@ class DataDict:
                       fontsize=font_size)
             plt.imshow(img)
             plt.axis('off')
-        plt.tight_layout(pad=0., w_pad=0., h_pad=1.0)
+        plt.tight_layout(pad=3., w_pad=2., h_pad=2.0)
         plt.show()
         pdb.set_trace()
 
