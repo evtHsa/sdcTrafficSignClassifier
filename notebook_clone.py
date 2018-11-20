@@ -14,30 +14,28 @@ import pickle
     
 # TODO: Fill this in based on where you saved the training and testing data
 DD = tsc_dd.DataDict()
-dd = DD.get_dict()
-print("FIXME: the above is a bit stupid")
 
 ### Replace each question mark with the appropriate value. 
 ### Use python, pandas or numpy methods rather than hard coding the results
 import numpy as np
 
 # TODO: Number of training examples
-n_train = dd['train']['X'].shape[0]
+n_train = DD.get_vbl('train', 'X').shape[0]
 
-# TODO: Number of validation examples
-n_validation = dd['valid']['X'].shape[0]
+n_validation = DD.get_vbl('valid', 'X').shape[0]
 
 # TODO: Number of testing examples.
-n_test = dd['test']['X'].shape[0]
+n_test = DD.get_vbl('test', 'X').shape[0]
 
 # 2DO: What's the shape of an traffic sign image?
-image_shape = "(" + str(dd['train']['X'].shape[1]) + "," + str(dd['train']['X'].shape[2]) + ")"
+_X = DD.get_vbl('valid', 'X')
+image_shape = "(" + str(_X.shape[1]) + "," + str(_X.shape[2]) + ")"
 
 # 2DO: How many unique classes/labels there are in the dataset.
 # now part of dd
 
-print("shape(features) = " + str(dd['train']['X'].shape ))
-print("shape(labels) = " + str(dd['train']['y'].shape ))
+print("shape(features) = " + str(DD.get_vbl('train', 'X').shape ))
+print("shape(labels) = " + str(DD.get_vbl('train', 'y').shape ))
 print("Number of training examples =", n_train)
 print("Number of validation examples =", n_validation)
 print("Number of testing examples =", n_test)

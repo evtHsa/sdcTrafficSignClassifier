@@ -26,7 +26,9 @@ class DataDict:
             self.signs_by_id[set_name] = [[ix for ix, id in
                                            enumerate(labels) if id == i] for i in
                                           range(self.n_classes)]
-
+    def get_vbl(self, set_name, vbl_name):
+        return self.dd[set_name][vbl_name]
+    
     def __init__(self):
         self.dd = dict()
         for set_name in self.get_set_names():
