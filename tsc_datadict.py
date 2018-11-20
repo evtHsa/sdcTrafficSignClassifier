@@ -67,13 +67,12 @@ class DataDict:
          #https://stackoverflow.com/questions/10351565/how-do-i-fit-long-title
         img_side = 32 #FIXME: we should calc this in ctor and make as attr
         rows, cols = self.sample_grid_dims()
-        magic_num_1 = 48
-        magic_num = int(2 * img_side) # FIXME: bad, hardcoded 1.5 x img h,w
-        magic_num_2 = 24
         font_size = 10 # FIXME:hardcoded badness
         text_width_char = 20
+        fig_height = 48
+        fig_width = 48
         
-        plt.figure(1, figsize=(magic_num_1, magic_num_1)) 
+        plt.figure(1, figsize=(fig_height, fig_width))
         for i in range(len(self.sample_signs)):
             img = self.sample_signs[i]['img']
             name = self.sample_signs[i]['name']
