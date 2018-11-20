@@ -42,13 +42,5 @@ print("Number of testing examples =", n_test)
 print("Image data shape =", image_shape)
 print("Number of classes =", DD.n_classes)
 
-sn_dict = tscu.get_id2name_dict()
-
-signs_by_set_by_id = DD.signs_by_id
-
-assert("FIXME:change the signature" == None)
-
-sample_signs = get_sample_signs(dd['train']['X'], dd['train']['y'], n_classes, sn_dict,
-                                signs_by_set_by_id['train'])
-
+assert("FIXME: implement DD.show_sample_signs" == None)
 pdb.set_trace()

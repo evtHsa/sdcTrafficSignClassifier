@@ -4,6 +4,12 @@ import numpy as np
 import tsc_util as tscu
 
 class DataDict:
+
+    def get_pickle_dict(self, set):
+        file = open(format("%s/%s.p" % (self.data_dir, set)), mode = 'rb')
+        d = pickle.load(file)
+        return d
+    
     def get_set_names(self):
         return [ 'train', 'valid', 'test']
 
@@ -28,12 +34,34 @@ class DataDict:
                                           range(self.n_classes)]
     def get_vbl(self, set_name, vbl_name):
         return self.dd[set_name][vbl_name]
-    
+
+    def set_id2name_map(self):
+        f = open('signnames.csv', 'r')
+        self.id2name_dict = dict(line.strip().split(',')
+                                 for line in f.readlines()[1:])
+
+    def select_sample_signs(self):
+        # only operate on training set
+        self.sample_signs = [None] * self.n_classes
+        for i in range(self.n_classes):
+            X = self.get_vbl('train', 'X')
+            # for now just select 1st image of every class
+            ix = self.signs_by_id['train'][i][0]
+            img =X[ix]
+            self.sample_signs[i] = { 'img' : img,
+                                     'name' : self.id2name_dict[str(i)]}
+
+    def get_sample_signs(self):
+        return self.sample_signs
+
     def __init__(self):
+        self.data_dir = "traffic-signs-data"
         self.dd = dict()
         for set_name in self.get_set_names():
-            pd = tscu.get_pickle_dict(set_name)
+            pd = self.get_pickle_dict(set_name)
             self.dd[set_name] = { 'X' : pd['features'], 'y' : pd['labels']}
         self.set_n_classes()
         self.organize_signs_by_id()
+        self.set_id2name_map()
+        self.select_sample_signs()
                                           
