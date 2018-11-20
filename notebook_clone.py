@@ -13,7 +13,7 @@ import tsc_datadict as tsc_dd
 import pickle
     
 # TODO: Fill this in based on where you saved the training and testing data
-DD = tsc_dd.DataDict()
+DD = tsc_dd.DataDict(show_sample=True, show_distrib=True)
 
 ### Replace each question mark with the appropriate value. 
 ### Use python, pandas or numpy methods rather than hard coding the results
@@ -42,6 +42,4 @@ print("Number of testing examples =", n_test)
 print("Image data shape =", image_shape)
 print("Number of classes =", DD.n_classes)
 
-#DD.show_sample_signs()
-DD.show_distributions()
 pdb.set_trace()

@@ -74,7 +74,6 @@ class DataDict:
         text_width_char = 22
         fig_height = 24
         fig_width = 24
-        
         plt.figure(1, figsize=(fig_height, fig_width))
         for i in range(len(self.sample_signs)):
             img = self.sample_signs[i]['img']
@@ -86,7 +85,7 @@ class DataDict:
             plt.axis('off')
         plt.tight_layout(pad=3., w_pad=1., h_pad=4.0)
         plt.show()
-        pdb.set_trace()
+        plt.close()
 
     def show_distribution(self, set_name):
         plt.bar(range(self.n_classes), [len(s) for s in self.signs_by_id[set_name]],
@@ -94,12 +93,13 @@ class DataDict:
         plt.title("Distribution(%s)" % set_name)
         plt.xticks(range(0, self.n_classes, 5))
         plt.show()
+        plt.close()
         
     def show_distributions(self):
         for set_name in self.get_set_names():
             self.show_distribution(set_name)
 
-    def __init__(self):
+    def __init__(self, show_sample=False, show_distrib=False):
         self.data_dir = "traffic-signs-data"
         self.dd = dict()
         for set_name in self.get_set_names():
@@ -109,4 +109,8 @@ class DataDict:
         self.organize_signs_by_id()
         self.set_id2name_map()
         self.select_sample_signs()
+        if show_sample:
+            self.show_sample_signs()
+        if show_distrib:
+            self.show_distributions()
                                           
