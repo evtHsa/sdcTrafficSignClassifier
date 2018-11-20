@@ -88,6 +88,17 @@ class DataDict:
         plt.show()
         pdb.set_trace()
 
+    def show_distribution(self, set_name):
+        plt.bar(range(self.n_classes), [len(s) for s in self.signs_by_id[set_name]],
+                align='center')
+        plt.title("Distribution(%s)" % set_name)
+        plt.xticks(range(0, self.n_classes, 5))
+        plt.show()
+        
+    def show_distributions(self):
+        for set_name in self.get_set_names():
+            self.show_distribution(set_name)
+
     def __init__(self):
         self.data_dir = "traffic-signs-data"
         self.dd = dict()

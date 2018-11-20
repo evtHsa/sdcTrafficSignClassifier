@@ -42,6 +42,6 @@ print("Number of testing examples =", n_test)
 print("Image data shape =", image_shape)
 print("Number of classes =", DD.n_classes)
 
-DD.show_sample_signs()
-assert("FIXME: implement DD.show_sample_signs" == None)
+#DD.show_sample_signs()
+DD.show_distributions()
 pdb.set_trace()
