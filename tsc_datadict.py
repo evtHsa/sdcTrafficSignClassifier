@@ -104,7 +104,6 @@ class DataDict:
         pdb.set_trace()
         self.dd[set_name]['X'] = [f(img)
                                   for img in self.dd[set_name]['X']]
-        print("hey")
         
     def normalize_images(self):
         # do this after displaying the sample signs
