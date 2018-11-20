@@ -2,6 +2,8 @@ import pickle
 import pdb
 import numpy as np
 import tsc_util as tscu
+import matplotlib.pyplot as plt
+from textwrap import wrap
 
 class DataDict:
 
@@ -52,7 +54,37 @@ class DataDict:
                                      'name' : self.id2name_dict[str(i)]}
 
     def get_sample_signs(self):
-        return self.sample_signs
+        return self.sample_sign
+
+    def sample_grid_dims(self):
+        n_imgs = len(self.sample_signs)
+        rows = int(np.sqrt(n_imgs) - 1)
+        cols = np.ceil(n_imgs / rows)
+        return rows, cols
+    
+    def show_sample_signs(self):
+        # https://matplotlib.org/gallery/subplots_axes_and_figures/figure_title.html
+         #https://stackoverflow.com/questions/10351565/how-do-i-fit-long-title
+        img_side = 32 #FIXME: we should calc this in ctor and make as attr
+        rows, cols = self.sample_grid_dims()
+        magic_num_1 = 48
+        magic_num = int(2 * img_side) # FIXME: bad, hardcoded 1.5 x img h,w
+        magic_num_2 = 24
+        font_size = 10 # FIXME:hardcoded badness
+        text_width_char = 20
+        
+        plt.figure(1, figsize=(magic_num_1, magic_num_1)) 
+        for i in range(len(self.sample_signs)):
+            img = self.sample_signs[i]['img']
+            name = self.sample_signs[i]['name']
+            plt.subplot(rows, cols, i + 1)
+            plt.title("\n".join(wrap("\n%d: %s" % (i + 1, name), text_width_char)),
+                      fontsize=font_size)
+            plt.imshow(img)
+            plt.axis('off')
+        plt.tight_layout(pad=0., w_pad=0., h_pad=1.0)
+        plt.show()
+        pdb.set_trace()
 
     def __init__(self):
         self.data_dir = "traffic-signs-data"
