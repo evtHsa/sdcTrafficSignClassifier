@@ -129,14 +129,14 @@ def LeNet(x):
     fc2 = tf.nn.relu(fc2)
 
     # TODO: Layer 5: Fully Connected. Input = 84. Output = 10.
-    logits = tf.layers.dense(fc2, 10)
+    logits = tf.layers.dense(fc2, DD.n_classes)
     
     return logits
 
 ## Features and Labels
 x = tf.placeholder(tf.float32, (None, 32, 32, 3))
 y = tf.placeholder(tf.int32, (None))
-one_hot_y = tf.one_hot(y, 43)
+one_hot_y = tf.one_hot(y, DD.n_classes)
 
 ## training pipeline
 rate = 0.001
@@ -174,7 +174,6 @@ with tf.Session() as sess:
         for offset in range(0, num_examples, BATCH_SIZE):
             end = offset + BATCH_SIZE
             batch_x, batch_y = X_train[offset:end], y_train[offset:end]
-            pdb.set_trace()
             sess.run(training_operation, feed_dict={x: batch_x, y: batch_y})
             
         validation_accuracy = evaluate(X_validation, y_validation)
@@ -184,7 +183,6 @@ with tf.Session() as sess:
         
     saver.save(sess, './lenet')
     print("Model saved")
-    assert("FIXME: validate pasted code below here" == None)
 
 ## evaluate the model
 with tf.Session() as sess:
