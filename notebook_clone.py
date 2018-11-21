@@ -7,6 +7,7 @@ import pdb
 # support code
 import tsc_util as tscu
 import tsc_datadict as tsc_dd
+from sklearn.utils import shuffle
 
 #step 0
 # Load pickled data
@@ -46,6 +47,12 @@ print("Number of classes =", DD.n_classes)
 from tensorflow.contrib.layers import flatten
 import tensorflow as tf
 
+X_train = DD.get_vbl('train', 'X')
+y_train = DD.get_vbl('train', 'y')
+X_validation = DD.get_vbl('valid', 'X')
+y_validation = DD.get_vbl('valid', 'y')
+X_test = DD.get_vbl('test', 'X')
+y_test = DD.get_vbl('test', 'y')
 
 ## setup tensorflow
 import tensorflow as tf
@@ -126,9 +133,6 @@ def LeNet(x):
     
     return logits
 
-assert("FIXME: validate pasted code below here" == None)
-
-
 ## Features and Labels
 x = tf.placeholder(tf.float32, (None, 32, 32, 1))
 y = tf.placeholder(tf.int32, (None))
@@ -179,10 +183,11 @@ with tf.Session() as sess:
         
     saver.save(sess, './lenet')
     print("Model saved")
+    assert("FIXME: validate pasted code below here" == None)
 
-    ## evaluate the model
-    with tf.Session() as sess:
-        saver.restore(sess, tf.train.latest_checkpoint('.'))
+## evaluate the model
+with tf.Session() as sess:
+    saver.restore(sess, tf.train.latest_checkpoint('.'))
 
     test_accuracy = evaluate(X_test, y_test)
     print("Test Accuracy = {:.3f}".format(test_accuracy))

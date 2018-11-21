@@ -118,6 +118,7 @@ class DataDict:
         self.dd = dict()
         for set_name in self.get_set_names():
             pd = self.get_pickle_dict(set_name)
+            assert(len(pd['features']) == len(pd['labels']))
             self.dd[set_name] = { 'X' : pd['features'], 'y' : pd['labels']}
         self.set_n_classes()
         self.organize_signs_by_id()
