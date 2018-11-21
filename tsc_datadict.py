@@ -101,8 +101,8 @@ class DataDict:
 
     def normalize_images_of_set(self, set_name):
         f = lambda img: (img - 128.) / 128.
-        self.dd[set_name]['X'] = [f(img)
-                                  for img in self.dd[set_name]['X']]
+        self.dd[set_name]['X'] = np.array([f(img)
+                                  for img in self.dd[set_name]['X']])
         
     def normalize_images(self):
         # do this after displaying the sample signs
