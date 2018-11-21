@@ -76,8 +76,8 @@ from tensorflow.contrib.layers import flatten
 def LeNet(x):    
     # Arguments used for tf.truncated_normal, randomly defines variables for the
     # weights and biases for each layer
-    mu = 0
-    sigma = 0.1
+    mu = 0 ## magic number
+    sigma = 0.1 ## magic number
     
     # conv strides: (batch, height, width, depth)
     # 2DO: Layer 1: Convolutional. Input = 32x32x1. Output = 28x28x6.
@@ -139,7 +139,7 @@ y = tf.placeholder(tf.int32, (None))
 one_hot_y = tf.one_hot(y, DD.n_classes)
 
 ## training pipeline
-rate = 0.001
+rate = 0.001 ## magic number
 
 logits = LeNet(x)
 cross_entropy = tf.nn.softmax_cross_entropy_with_logits(labels=one_hot_y, logits=logits)
