@@ -81,7 +81,7 @@ def LeNet(x):
     
     # conv strides: (batch, height, width, depth)
     # 2DO: Layer 1: Convolutional. Input = 32x32x1. Output = 28x28x6.
-    conv1_W = tf.Variable(tf.truncated_normal(shape=(5, 5, 1, 6), mean = mu,
+    conv1_W = tf.Variable(tf.truncated_normal(shape=(5, 5, 3, 6), mean = mu,
                                               stddev = sigma))
     conv1_b = tf.Variable(tf.zeros(6))
     conv1   = tf.nn.conv2d(x, conv1_W, strides=[1, 1, 1, 1],
@@ -134,9 +134,9 @@ def LeNet(x):
     return logits
 
 ## Features and Labels
-x = tf.placeholder(tf.float32, (None, 32, 32, 1))
+x = tf.placeholder(tf.float32, (None, 32, 32, 3))
 y = tf.placeholder(tf.int32, (None))
-one_hot_y = tf.one_hot(y, 10)
+one_hot_y = tf.one_hot(y, 43)
 
 ## training pipeline
 rate = 0.001
@@ -174,6 +174,7 @@ with tf.Session() as sess:
         for offset in range(0, num_examples, BATCH_SIZE):
             end = offset + BATCH_SIZE
             batch_x, batch_y = X_train[offset:end], y_train[offset:end]
+            pdb.set_trace()
             sess.run(training_operation, feed_dict={x: batch_x, y: batch_y})
             
         validation_accuracy = evaluate(X_validation, y_validation)
