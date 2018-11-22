@@ -1,2 +1,11 @@
 
 - initial 0.919 : basic LeNet
+  	  112118_2001
+	  
+  	  0.894, 0.890, 0.929, 0.924, 0.907, 0.903
+	  
+	  rate = 0.001 
+	  mu = 0 
+	  sigma = 0.1
+	  EPOCHS = 10
+	  BATCH_SIZE = 128
