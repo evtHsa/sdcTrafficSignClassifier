@@ -10,7 +10,6 @@ from sklearn.utils import shuffle
 
 #step 0
 # Load pickled data
-import pickle
     
 # TODO: Fill this in based on where you saved the training and testing data
 #DD = tsc_dd.DataDict(show_sample=True, show_distrib=True)

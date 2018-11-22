@@ -1,7 +1,6 @@
 import pickle
 import pdb
 import numpy as np
-import tsc_util as tscu
 import matplotlib.pyplot as plt
 from textwrap import wrap
 
