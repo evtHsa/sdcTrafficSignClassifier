@@ -5,7 +5,6 @@
 import pdb
 
 # support code
-import tsc_util as tscu
 import tsc_datadict as tsc_dd
 from sklearn.utils import shuffle
 
