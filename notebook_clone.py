@@ -61,8 +61,9 @@ import tensorflow as tf
 rate = 0.001 
 mu = 0 
 sigma = 0.1
-EPOCHS = 10
-BATCH_SIZE = 128
+EPOCHS = 30
+BATCH_SIZE = 96
+GOOD_ENOUGH = 0.935
 
 # ??: options for implementing
 #    1) simple adaptation of linear script in notebook_clone.py
@@ -181,6 +182,9 @@ with tf.Session() as sess:
         print("EPOCH {} ...".format(i+1))
         print("Validation Accuracy = {:.3f}".format(validation_accuracy))
         print()
+        if validation_accuracy > GOOD_ENOUGH:
+            print("better than good enough")
+            break
         
     saver.save(sess, './lenet')
     print("Model saved")
