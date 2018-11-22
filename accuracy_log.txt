@@ -1,0 +1,2 @@
+
+- initial 0.919 : basic LeNet
