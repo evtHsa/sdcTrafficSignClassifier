@@ -1,4 +1,12 @@
 
+- 0.939
+	rate = 0.001 
+	mu = 0 
+	sigma = 0.1
+	EPOCHS = 30
+       	BATCH_SIZE = 96
+	GOOD_ENOUGH = 0.935
+	 
 - initial 0.919 : basic LeNet
   	  112118_2001
 	  
