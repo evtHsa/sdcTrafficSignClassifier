@@ -109,24 +109,35 @@ class DataDict:
         
 
     def summarize(self):
+        print("loaded from ", self.load_type)
         for set in self.set_names:
-            print(set)
-            print("\tshape(features) = " + str(self.get_vbl(set, 'X').shape ))
-            print("\tshape(labels) = " + str(self.get_vbl(set, 'y').shape ))
+            print("\t" + set)
+            print("\t\tshape(features) = " + str(self.get_vbl(set, 'X').shape ))
+            print("\t\tshape(labels) = " + str(self.get_vbl(set, 'y').shape ))
 
-    def __init__(self, set_names, show_sample=False, show_distrib=False,
-                 summarize=False, do_pre_pro=False):
+    def load_from_pickle(self):
+        for set_name in self.set_names:
+            pd = self.get_pickle_dict(set_name)
+            assert(len(pd['features']) == len(pd['labels']))
+            self.dd[set_name] = { 'X' : pd['features'], 'y' : pd['labels']}
+            
+    def __init__(self, set_names, load_type, data_dir, show_sample=False,
+                 show_distrib=False, summarize=False, do_pre_pro=False):
         
         assert(set_names != None)
         assert(type(set_names) is list)
         
         self.set_names = set_names
-        self.data_dir = "traffic-signs-data"
+        self.data_dir = data_dir
         self.dd = dict()
-        for set_name in self.set_names:
-            pd = self.get_pickle_dict(set_name)
-            assert(len(pd['features']) == len(pd['labels']))
-            self.dd[set_name] = { 'X' : pd['features'], 'y' : pd['labels']}
+
+        self.load_type = load_type
+        assert(self.load_type == 'pickle')
+        self.load_fn_dict = {
+            'pickle' : self.load_from_pickle
+            }
+        self.load_fn_dict[self.load_type]()
+        
         self.set_n_classes()
         self.organize_signs_by_id()
         self.set_id2name_map()
