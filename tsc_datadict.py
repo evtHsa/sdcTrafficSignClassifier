@@ -11,28 +11,24 @@ class DataDict:
         d = pickle.load(file)
         return d
     
-    def get_set_names(self):
-        return [ 'train', 'valid', 'test']
-
     def set_n_classes(self):
-        set_names = self.get_set_names()
-        all_labels = self.dd[set_names[0]]['y']
-        for set_name in set_names[1:]:
+        all_labels = self.dd[self.set_names[0]]['y']
+        for set_name in self.set_names[1:]:
             np.append(all_labels, self.dd[set_name]['y'])
             self.n_classes = len(np.unique(all_labels))
-        
+
     def get_dict(self):
         return self.dd
     
     def organize_signs_by_id(self):
         self.signs_by_id = dict()
-        set_names = self.get_set_names()
         dd = self.dd
-        for set_name in set_names:
+        for set_name in self.set_names:
             labels = dd[set_name]['y']
             self.signs_by_id[set_name] = [[ix for ix, id in
                                            enumerate(labels) if id == i] for i in
                                           range(self.n_classes)]
+            
     def get_vbl(self, set_name, vbl_name):
         return self.dd[set_name][vbl_name]
 
@@ -95,7 +91,7 @@ class DataDict:
         plt.close()
         
     def show_distributions(self):
-        for set_name in self.get_set_names():
+        for set_name in self.set_names:
             self.show_distribution(set_name)
 
     def normalize_images_of_set(self, set_name):
@@ -105,17 +101,29 @@ class DataDict:
         
     def normalize_images(self):
         # do this after displaying the sample signs
-        for set_name in self.get_set_names():
+        for set_name in self.set_names:
             self.normalize_images_of_set(set_name)
 
     def preprocess_images(self):
         self.normalize_images()
         
 
-    def __init__(self, show_sample=False, show_distrib=False, do_pre_pro=False):
+    def summarize(self):
+        for set in self.set_names:
+            print(set)
+            print("\tshape(features) = " + str(self.get_vbl(set, 'X').shape ))
+            print("\tshape(labels) = " + str(self.get_vbl(set, 'y').shape ))
+
+    def __init__(self, set_names, show_sample=False, show_distrib=False,
+                 summarize=False, do_pre_pro=False):
+        
+        assert(set_names != None)
+        assert(type(set_names) is list)
+        
+        self.set_names = set_names
         self.data_dir = "traffic-signs-data"
         self.dd = dict()
-        for set_name in self.get_set_names():
+        for set_name in self.set_names:
             pd = self.get_pickle_dict(set_name)
             assert(len(pd['features']) == len(pd['labels']))
             self.dd[set_name] = { 'X' : pd['features'], 'y' : pd['labels']}
@@ -129,4 +137,6 @@ class DataDict:
             self.show_distributions()
         if do_pre_pro:
             self.preprocess_images()
+        if summarize:
+            self.summarize()
                                           

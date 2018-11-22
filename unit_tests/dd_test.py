@@ -16,8 +16,8 @@ import pdb
 import tsc_datadict as tsc_dd
 from sklearn.utils import shuffle
 
-DD = tsc_dd.DataDict()
-
+DD = tsc_dd.DataDict([ 'train', 'valid', 'test'])
+DD.summarize()
 #n_train = DD.get_vbl('train', 'X').shape[0]
 
 print("done")
