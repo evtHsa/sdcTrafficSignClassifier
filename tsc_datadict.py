@@ -112,7 +112,7 @@ class DataDict:
         self.normalize_images()
         
 
-    def __init__(self, show_sample=False, show_distrib=False):
+    def __init__(self, show_sample=False, show_distrib=False, do_pre_pro=False):
         self.data_dir = "traffic-signs-data"
         self.dd = dict()
         for set_name in self.get_set_names():
@@ -127,5 +127,6 @@ class DataDict:
             self.show_sample_signs()
         if show_distrib:
             self.show_distributions()
-        self.preprocess_images()
+        if do_pre_pro:
+            self.preprocess_images()
                                           
