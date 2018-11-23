@@ -120,10 +120,14 @@ class DataDict:
         f = open(fname, 'r')
         lines  = f.readlines()[1:]
         ret = dict(line.strip().split(',') for line in lines)
+        return ret
 
     def load_csv_file(self, set_name):
             print("load_csv_file: ", set_name)
             csv_dict = self.parse_img2class_csv(set_name)
+            for fname in csv_dict.keys():
+                print("Booger: ", fname)
+            pdb.set_trace()
             assert("return stuff" == None)
 
     def load_from_image_dir(self):
