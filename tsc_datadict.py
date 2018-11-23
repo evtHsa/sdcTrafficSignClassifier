@@ -38,22 +38,20 @@ class DataDict:
         self.id2name_dict = dict(line.strip().split(',')
                                  for line in f.readlines()[1:])
 
-    def select_sample_sigs_1st_of_class(self):
-        # only operate on training set
-        self.sample_signs = [None] * self.n_classes
-        for i in range(self.n_classes):
-            X = self.get_vbl('train', 'X')
-            # for now just select 1st image of every class
-            ix = self.signs_by_id['train'][i][0]
-            img =X[ix]
-            self.sample_signs[i] = { 'img' : img,
-                                     'name' : self.id2name_dict[str(i)]}
+    def select_sample_signs_1st_of_class_by_set(self, set_name_list):
+        for set_name in set_name_list:
+            for i in range(self.n_classes):
+                X = self.get_vbl(set_name, 'X')
+                ix = self.signs_by_id[set_name][i][0]
+                img =X[ix]
+                self.sample_signs.append({ 'sign_class' : i, 'img' : img,
+                                           'name' : self.id2name_dict[str(i)]})
             
-    def fumble(self):
+    def fumble(self, set_name_list):
         assert("needs code" == None)
 
     def get_sample_signs(self):
-        return self.sample_sign
+        return self.sample_signs
 
     def sample_grid_dims(self):
         n_imgs = len(self.sample_signs)
@@ -74,14 +72,17 @@ class DataDict:
         fig_height = 24
         fig_width = 24
         plt.figure(1, figsize=(fig_height, fig_width))
-        for i in range(len(self.sample_signs)):
-            img = self.sample_signs[i]['img']
-            name = self.sample_signs[i]['name']
+        i = 0
+        for sample_sign_dict in self.sample_signs:
+            sign_class      = sample_sign_dict['sign_class']
+            img   = sample_sign_dict['img']
+            name = sample_sign_dict['name']
             plt.subplot(rows, cols, i + 1)
-            plt.title("\n".join(wrap("\n%d: %s" % (i + 1, name), text_width_char)),
+            plt.title("\n".join(wrap("\n%d: %s" % (sign_class + 1, name), text_width_char)),
                       fontsize=font_size)
             plt.imshow(img)
             plt.axis('off')
+            i += 1
         plt.tight_layout(pad=3., w_pad=1., h_pad=4.0)
         plt.show()
         plt.close()
@@ -159,14 +160,20 @@ class DataDict:
         self.set_names = set_names
         self.data_dir = data_dir
         self.dd = dict()
+        self.sample_signs = list()
 
         self.load_type = load_type
         assert(self.load_type == 'pickle' or self.load_type == 'image_dir')
         self.fn_dict_dict = {
-            'pickle' : {'load_fn' : self.load_from_pickle,
-                        'sample_select' : self.select_sample_sigs_1st_of_class},
-            'image_dir' : {'load_fn' :self.load_from_image_dir,
-                           'sample_select' : self.fumble}
+            'pickle' : {
+                'load_fn' : self.load_from_pickle,
+                'sample_set_list' : ['train'],
+                'sample_select' : self.select_sample_signs_1st_of_class_by_set
+            },
+            'image_dir' : {
+                'load_fn' : self.load_from_image_dir,
+                'sample_set_list' : ['test'],
+                'sample_select' : self.fumble}
             }
 
         self.fn_dict_dict[self.load_type]['load_fn']()
@@ -174,8 +181,8 @@ class DataDict:
         self.set_n_classes()
         self.organize_signs_by_id()
         self.set_id2name_map()
-        self.fn_dict_dict[self.load_type]['sample_select']()
-        self.select_sample_sigs_1st_of_class()
+        self.fn_dict_dict[self.load_type]['sample_select'](
+            self.fn_dict_dict[self.load_type]['sample_set_list'])
         if show_sample:
             self.show_sample_signs()
         if show_distrib:
