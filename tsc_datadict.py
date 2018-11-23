@@ -3,6 +3,7 @@ import pdb
 import numpy as np
 import matplotlib.pyplot as plt
 from textwrap import wrap
+import cv2
 
 class DataDict:
 
@@ -126,8 +127,10 @@ class DataDict:
             print("load_csv_file: ", set_name)
             csv_dict = self.parse_img2class_csv(set_name)
             for fname in csv_dict.keys():
+                fname = self.data_dir + "/" + fname
                 print("Booger: ", fname)
-            pdb.set_trace()
+                pdb.set_trace()
+                img = plt.imread(fname)
             assert("return stuff" == None)
 
     def load_from_image_dir(self):
