@@ -126,11 +126,14 @@ class DataDict:
     def load_csv_file(self, set_name):
             print("load_csv_file: ", set_name)
             csv_dict = self.parse_img2class_csv(set_name)
+            X = list()
+            y = list()
             for fname in csv_dict.keys():
                 fname = self.data_dir + "/" + fname
                 print("Booger: ", fname)
-                pdb.set_trace()
-                img = plt.imread(fname)
+                y.append(csv_dict[fname])
+                X.append(plt.imread(fname))
+            pdb.set_trace()
             assert("return stuff" == None)
 
     def load_from_image_dir(self):
