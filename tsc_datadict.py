@@ -13,10 +13,10 @@ class DataDict:
         return d
     
     def set_n_classes(self):
-        all_labels = self.dd[self.set_names[0]]['y']
-        for set_name in self.set_names[1:]:
-            np.append(all_labels, self.dd[set_name]['y'])
-            self.n_classes = len(np.unique(all_labels))
+        all_labels = np.array([])
+        for set_name in self.set_names:
+            all_labels = np.append(all_labels, self.dd[set_name]['y'])
+        self.n_classes = len(np.unique(all_labels))
 
     def get_dict(self):
         return self.dd
@@ -38,7 +38,7 @@ class DataDict:
         self.id2name_dict = dict(line.strip().split(',')
                                  for line in f.readlines()[1:])
 
-    def select_sample_signs(self):
+    def select_sample_sigs_1st_of_class(self):
         # only operate on training set
         self.sample_signs = [None] * self.n_classes
         for i in range(self.n_classes):
@@ -48,6 +48,9 @@ class DataDict:
             img =X[ix]
             self.sample_signs[i] = { 'img' : img,
                                      'name' : self.id2name_dict[str(i)]}
+            
+    def fumble(self):
+        assert("needs code" == None)
 
     def get_sample_signs(self):
         return self.sample_sign
@@ -115,6 +118,7 @@ class DataDict:
             print("\t" + set)
             print("\t\tshape(features) = " + str(self.get_vbl(set, 'X').shape ))
             print("\t\tshape(labels) = " + str(self.get_vbl(set, 'y').shape ))
+        print("\t\tn_classes = ", self.n_classes)
 
     def parse_img2class_csv(self, set_name):
         fname = "%s/%s.csv" % (self.data_dir, set_name)
@@ -128,18 +132,17 @@ class DataDict:
             csv_dict = self.parse_img2class_csv(set_name)
             X = list()
             y = list()
+            
             for fname in csv_dict.keys():
-                fname = self.data_dir + "/" + fname
-                print("Booger: ", fname)
+                img_path = self.data_dir + "/" + fname
+                X.append(plt.imread(img_path))
                 y.append(csv_dict[fname])
-                X.append(plt.imread(fname))
-            pdb.set_trace()
-            assert("return stuff" == None)
+            return np.array(X), np.array(y)
 
     def load_from_image_dir(self):
         for set_name in self.set_names:
-            image_name_list, class_list = self.load_csv_file(set_name)
-        assert("needs code" == None)
+            image_array, class_array = self.load_csv_file(set_name)
+        self.dd[set_name] = { 'X' : image_array, 'y' : class_array}
         
     def load_from_pickle(self):
         for set_name in self.set_names:
@@ -159,16 +162,20 @@ class DataDict:
 
         self.load_type = load_type
         assert(self.load_type == 'pickle' or self.load_type == 'image_dir')
-        self.load_fn_dict = {
-            'pickle' : self.load_from_pickle,
-            'image_dir' : self.load_from_image_dir
+        self.fn_dict_dict = {
+            'pickle' : {'load_fn' : self.load_from_pickle,
+                        'sample_select' : self.select_sample_sigs_1st_of_class},
+            'image_dir' : {'load_fn' :self.load_from_image_dir,
+                           'sample_select' : self.fumble}
             }
-        self.load_fn_dict[self.load_type]()
+        pdb.set_trace()
+        self.fn_dict_dict[self.load_type]['load_fn']()
         
         self.set_n_classes()
         self.organize_signs_by_id()
         self.set_id2name_map()
-        self.select_sample_signs()
+        self.fn_dict_dict[self.load_type]['sample_select']()
+        self.select_sample_sigs_1st_of_class()
         if show_sample:
             self.show_sample_signs()
         if show_distrib:
