@@ -22,6 +22,7 @@ class DataDict:
         return self.dd
     
     def organize_signs_by_id(self):
+        pdb.set_trace()
         self.signs_by_id = dict()
         dd = self.dd
         for set_name in self.set_names:
@@ -47,13 +48,21 @@ class DataDict:
                 self.sample_signs.append({ 'sign_class' : i, 'img' : img,
                                            'name' : self.id2name_dict[str(i)]})
             
-    def fumble(self, set_name_list):
-        assert("needs code" == None)
+    def select_sample_signs_all_per_class(self, set_name_list):
+        pdb.set_trace()
+        for set_name in set_name_list:
+            for i in range(self.n_classes):
+                X = self.get_vbl(set_name, 'X')
+                for ix in self.signs_by_id[set_name][i]:
+                    img =X[ix]
+                    self.sample_signs.append({ 'sign_class' : i, 'img' : img,
+                                               'name' : self.id2name_dict[str(i)]})
 
     def get_sample_signs(self):
         return self.sample_signs
 
     def sample_grid_dims(self):
+        pdb.set_trace()
         n_imgs = len(self.sample_signs)
         rows = int(np.sqrt(n_imgs) - 1)
         cols = np.ceil(n_imgs / rows)
@@ -65,8 +74,10 @@ class DataDict:
         # https://matplotlib.org/gallery/subplots_axes_and_figures/figure_title.html
         #https://stackoverflow.com/questions/10351565/how-do-i-fit-long-title
 
+        duh = True
         img_side = 32 #FIXME: we should calc this in ctor and make as attr
         rows, cols = self.sample_grid_dims()
+        print("FIXME:rows = %d, cols = %d" % (rows, cols))
         font_size = 10 # FIXME:hardcoded badness
         text_width_char = 22
         fig_height = 24
@@ -76,6 +87,9 @@ class DataDict:
         for sample_sign_dict in self.sample_signs:
             sign_class      = sample_sign_dict['sign_class']
             img   = sample_sign_dict['img']
+            if duh:
+                print("type(img) = ", type(img))
+                duh = False
             name = sample_sign_dict['name']
             plt.subplot(rows, cols, i + 1)
             plt.title("\n".join(wrap("\n%d: %s" % (sign_class + 1, name), text_width_char)),
@@ -173,7 +187,7 @@ class DataDict:
             'image_dir' : {
                 'load_fn' : self.load_from_image_dir,
                 'sample_set_list' : ['test'],
-                'sample_select' : self.fumble}
+                'sample_select' : self.select_sample_signs_all_per_class}
             }
 
         self.fn_dict_dict[self.load_type]['load_fn']()
