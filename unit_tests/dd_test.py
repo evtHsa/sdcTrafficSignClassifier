@@ -18,7 +18,7 @@ from sklearn.utils import shuffle
 
 DD = tsc_dd.DataDict([ 'train', 'valid', 'test'], 'pickle', 'traffic-signs-data')
 DD.summarize()
-DD.show_sample_signs()
+#DD.show_sample_signs()
 print("X is a ", type(DD.get_vbl('train', 'X').shape[0]))
 
 #n_train = DD.get_vbl('train', 'X').shape[0]

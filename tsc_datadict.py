@@ -168,7 +168,7 @@ class DataDict:
             'image_dir' : {'load_fn' :self.load_from_image_dir,
                            'sample_select' : self.fumble}
             }
-        pdb.set_trace()
+
         self.fn_dict_dict[self.load_type]['load_fn']()
         
         self.set_n_classes()
