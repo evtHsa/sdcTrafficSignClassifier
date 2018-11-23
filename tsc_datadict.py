@@ -115,7 +115,20 @@ class DataDict:
             print("\t\tshape(features) = " + str(self.get_vbl(set, 'X').shape ))
             print("\t\tshape(labels) = " + str(self.get_vbl(set, 'y').shape ))
 
+    def parse_img2class_csv(self, set_name):
+        fname = "%s/%s.csv" % (self.data_dir, set_name)
+        f = open(fname, 'r')
+        lines  = f.readlines()[1:]
+        ret = dict(line.strip().split(',') for line in lines)
+
+    def load_csv_file(self, set_name):
+            print("load_csv_file: ", set_name)
+            csv_dict = self.parse_img2class_csv(set_name)
+            assert("return stuff" == None)
+
     def load_from_image_dir(self):
+        for set_name in self.set_names:
+            image_name_list, class_list = self.load_csv_file(set_name)
         assert("needs code" == None)
         
     def load_from_pickle(self):
