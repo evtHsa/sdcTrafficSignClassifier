@@ -12,12 +12,6 @@ class DataDict:
         d = pickle.load(file)
         return d
     
-    def set_n_classes(self):
-        all_labels = np.array([])
-        for set_name in self.set_names:
-            all_labels = np.append(all_labels, self.dd[set_name]['y'])
-        self.n_classes = len(np.unique(all_labels))
-
     def get_dict(self):
         return self.dd
     
@@ -34,10 +28,12 @@ class DataDict:
     def get_vbl(self, set_name, vbl_name):
         return self.dd[set_name][vbl_name]
 
-    def set_id2name_map(self):
+    def process_class_names(self):
         f = open('signnames.csv', 'r')
+        lines = f.readlines()[1:]
         self.id2name_dict = dict(line.strip().split(',')
-                                 for line in f.readlines()[1:])
+                                 for line in lines)
+        self.n_classes = len(np.unique(self.id2name_dict.keys())[0])
 
     def select_sample_signs_1st_of_class_by_set(self, set_name_list):
         for set_name in set_name_list:
@@ -191,10 +187,8 @@ class DataDict:
             }
 
         self.fn_dict_dict[self.load_type]['load_fn']()
-        
-        self.set_n_classes()
+        self.process_class_names() # sets n_classes, id2name_dict
         self.organize_signs_by_id()
-        self.set_id2name_map()
         self.fn_dict_dict[self.load_type]['sample_select'](
             self.fn_dict_dict[self.load_type]['sample_set_list'])
         if show_sample:
