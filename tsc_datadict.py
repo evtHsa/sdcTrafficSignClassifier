@@ -115,6 +115,9 @@ class DataDict:
             print("\t\tshape(features) = " + str(self.get_vbl(set, 'X').shape ))
             print("\t\tshape(labels) = " + str(self.get_vbl(set, 'y').shape ))
 
+    def load_from_image_dir(self):
+        assert("needs code" == None)
+        
     def load_from_pickle(self):
         for set_name in self.set_names:
             pd = self.get_pickle_dict(set_name)
@@ -132,9 +135,10 @@ class DataDict:
         self.dd = dict()
 
         self.load_type = load_type
-        assert(self.load_type == 'pickle')
+        assert(self.load_type == 'pickle' or self.load_type == 'image_dir')
         self.load_fn_dict = {
-            'pickle' : self.load_from_pickle
+            'pickle' : self.load_from_pickle,
+            'image_dir' : self.load_from_image_dir
             }
         self.load_fn_dict[self.load_type]()
         
