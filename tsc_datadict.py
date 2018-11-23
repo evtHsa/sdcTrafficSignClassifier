@@ -15,15 +15,22 @@ class DataDict:
     def get_dict(self):
         return self.dd
     
+
     def organize_signs_by_id(self):
-        pdb.set_trace()
         self.signs_by_id = dict()
-        dd = self.dd
+        d_ = dict()
+        l = list()
         for set_name in self.set_names:
-            labels = dd[set_name]['y']
-            self.signs_by_id[set_name] = [[ix for ix, id in
-                                           enumerate(labels) if id == i] for i in
-                                          range(self.n_classes)]
+            labels = self.dd[set_name]['y']
+            ix_class_list = enumerate(labels)
+            for label in np.unique(labels):
+                d_[label] = list()
+            for ix, class_ix in ix_class_list:
+                d_[class_ix].append(ix)
+    
+            for ix in sorted([int(ix) for ix in d_.keys()]):
+                l.append(d_[str(ix)])
+            self.signs_by_id[set_name] = d_
             
     def get_vbl(self, set_name, vbl_name):
         return self.dd[set_name][vbl_name]
@@ -135,19 +142,26 @@ class DataDict:
         fname = "%s/%s.csv" % (self.data_dir, set_name)
         f = open(fname, 'r')
         lines  = f.readlines()[1:]
-        ret = dict(line.strip().split(',') for line in lines)
-        return ret
+        list_of_file_class_pair_lists = [line.strip().split(',') for line in lines]
+        class2img_name_dict = dict()
+        for filename, class_ix in list_of_file_class_pair_lists:
+            class_ix = class_ix.strip() # took a while to see _this_ problem
+            if not class_ix in class2img_name_dict:
+                class2img_name_dict[class_ix] = [filename]
+            else:
+                class2img_name_dict[class_ix].append(filename)
+        return class2img_name_dict
 
     def load_csv_file(self, set_name):
-            print("load_csv_file: ", set_name)
-            csv_dict = self.parse_img2class_csv(set_name)
+            cind = self.parse_img2class_csv(set_name)
+            #cind -> class 2 image name dict
             X = list()
             y = list()
-            
-            for fname in csv_dict.keys():
-                img_path = self.data_dir + "/" + fname
-                X.append(plt.imread(img_path))
-                y.append(csv_dict[fname])
+            for class_str in [str(ix) for ix in sorted([ int(x) for x in cind.keys()])]:
+                for img_name in cind[class_str]:
+                    img_path = self.data_dir + "/" + img_name
+                    X.append(plt.imread(img_path))
+                    y.append(class_str)
             return np.array(X), np.array(y)
 
     def load_from_image_dir(self):
