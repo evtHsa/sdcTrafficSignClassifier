@@ -18,7 +18,7 @@ class DataDict:
     def organize_signs_by_id(self):
         self.signs_by_id = dict()
         d_ = dict()
-        l = list()
+        l_ = list()
         for set_name in self.set_names:
             labels = self.dd[set_name]['y']
             ix_class_list = enumerate(labels)
@@ -27,7 +27,7 @@ class DataDict:
             for ix, class_ix in ix_class_list:
                 d_[class_ix].append(ix)
             for ix in sorted([int(ix) for ix in d_.keys()]):
-                l.append(d_[ix])
+                l_.append(d_[str(ix)])
             self.signs_by_id[set_name] = d_
             
     def get_vbl(self, set_name, vbl_name):
@@ -50,8 +50,6 @@ class DataDict:
                                                               _dict['sign_class'], _dict['name']))
 
     def select_sample_signs_1st_of_class_by_set(self, set_name_list):
-        # save set_name_list since show_sample_signs may be called much later
-        self.sample_set_list = set_name_list
         for set_name in set_name_list:
             _list = self.sample_signs[set_name]
             for class_ix in self.signs_by_id[set_name].keys():
@@ -61,8 +59,6 @@ class DataDict:
         self.dump_sample_signs()
             
     def select_sample_signs_all_per_class(self, set_name_list):
-        # save set_name_list since show_sample_signs may be called much later
-        self.sample_set_list = set_name_list
         print("FIXME: select_sample_signs_all_per_class")
 
         for set_name in set_name_list:
@@ -79,10 +75,10 @@ class DataDict:
         return self.sample_signs
 
     def sample_grid_dims(self):
-        pdb.set_trace()
-        n_imgs = len(self.sample_signs)
-        rows = int(np.sqrt(n_imgs) - 1)
-        cols = np.ceil(n_imgs / rows)
+        # FIXME: analogize what I did for lane finding, fixed grid, repeat until all dpy'ed
+        # FIXME: the displayer should be a much simpler class than for lane finding
+        rows = 9
+        cols = 5
         return rows, cols
     
     def show_sample_signs(self):
@@ -102,7 +98,7 @@ class DataDict:
         for set_name in self.sample_set_list:
             X = self.get_vbl(set_name, 'X')
             i = 0
-            for ssd in self.sample_signs: #ssd -> sample sign dict
+            for ssd in self.sample_signs[set_name]: #ssd -> sample sign dict
                 sign_class      = ssd['sign_class']
                 img   = X[ssd['ix']]
                 name = ssd['name']
@@ -115,10 +111,10 @@ class DataDict:
                 plt.imshow(img)
                 plt.axis('off')
                 i += 1
-                pdb.set_trace()
-                plt.tight_layout(pad=3., w_pad=1., h_pad=4.0)
-                plt.show()
-                plt.close()
+            pdb.set_trace()
+            plt.tight_layout(pad=3., w_pad=1., h_pad=4.0)
+            plt.show()
+            plt.close()
 
     def show_distribution(self, set_name):
         plt.bar(range(self.n_classes), [len(s) for s in self.signs_by_id[set_name]],
@@ -217,6 +213,9 @@ class DataDict:
                 'sample_set_list' : ['test'],
                 'sample_select' : self.select_sample_signs_all_per_class}
             }
+
+        # save set_name_list since show_sample_signs may be called much later
+        self.sample_set_list =  self.fn_dict_dict[self.load_type]['sample_set_list']
 
         self.fn_dict_dict[self.load_type]['load_fn']()
         self.process_class_names() # sets n_classes, id2name_dict
