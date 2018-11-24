@@ -46,7 +46,7 @@ class DataDict:
             print("\t", set_name)
             dict_list = self.sample_signs[set_name]
             for _dict in dict_list:
-                print("\t\tix = %d, class = %d, name = %s" % (_dict['ix'],
+                print("\t\tix = %d, class = %s, name = %s" % (_dict['ix'],
                                                               _dict['sign_class'], _dict['name']))
 
     def select_sample_signs_1st_of_class_by_set(self, set_name_list):
@@ -59,17 +59,13 @@ class DataDict:
         self.dump_sample_signs()
             
     def select_sample_signs_all_per_class(self, set_name_list):
-        print("FIXME: select_sample_signs_all_per_class")
-
         for set_name in set_name_list:
             _list = self.sample_signs[set_name]
             for class_ix_s in self.signs_by_id[set_name].keys():
                 for img_ix in self.signs_by_id[set_name][class_ix_s]:
-                    _list.append({ 'ix': img_ix, 'sign_class' : i,
-                                   'name' : self.id2name_dict[str(i)]})
-        self.dump_sample_signs()
-        pdb.set_trace()
-        print("FIXME: check sample_signs")
+                    _list.append({ 'ix': img_ix, 'sign_class' : class_ix_s,
+                                   'name' : self.id2name_dict[str(class_ix_s)]})
+        #self.dump_sample_signs()
 
     def get_sample_signs(self):
         return self.sample_signs
@@ -102,19 +98,16 @@ class DataDict:
                 sign_class      = ssd['sign_class']
                 img   = X[ssd['ix']]
                 name = ssd['name']
-                print("FIXME: ix = %d, class = %d, name = %s" %(ssd['ix'],
-                                                                sign_class, name))
                 plt.subplot(rows, cols, i + 1)
-                plt.title("\n".join(wrap("\n%d: %s" % (sign_class + 1, name),
+                plt.title("\n".join(wrap("\n%s: %s" % (int(sign_class) + 1, name),
                                          text_width_char)),
                           fontsize=font_size)
                 plt.imshow(img)
                 plt.axis('off')
                 i += 1
-            pdb.set_trace()
-            plt.tight_layout(pad=3., w_pad=1., h_pad=4.0)
-            plt.show()
-            plt.close()
+        plt.tight_layout(pad=3., w_pad=1., h_pad=4.0)
+        plt.show()
+        plt.close()
 
     def show_distribution(self, set_name):
         plt.bar(range(self.n_classes), [len(s) for s in self.signs_by_id[set_name]],
