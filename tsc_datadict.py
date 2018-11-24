@@ -12,24 +12,40 @@ class DataDict:
         d = pickle.load(file)
         return d
     
-    def get_dict(self):
-        return self.dd
-    
+    def safe_append_dict_of_lists(self, _dict, key, val):
+        try:
+            _dict[key].append(val)
+        except:
+            _dict[key] = [val]
+            
+    # self.signs_by_id is a dict keyed on set name (ex: 'train', 'valid',
+    #    'test')
+    #
+    #        each value is an array of dimension n_classes
+    #            the value in each array cell is a list of indices where the label in "y"
+    #            at that index is equal to the index into signs by id
+    #
+    # graphically
+    #
+    # signs_by_id
+    #     'train' : [0] - indices of 0s in labels
+    #     'train' : [1] - indices of 1s in labels
+    #     ..
+    #     'train' : [43] - indices of 43s in labels
+    #
+    #                     alternatively    
     def organize_signs_by_id(self):
         self.signs_by_id = dict()
-        d_ = dict()
-        l_ = list()
+        sub_dict = dict()
+
         for set_name in self.set_names:
             labels = self.dd[set_name]['y']
-            ix_class_list = enumerate(labels)
-            for label in np.unique(labels):
-                d_[label] = list()
-            for ix, class_ix in ix_class_list:
-                d_[class_ix].append(ix)
-            for ix in sorted([int(ix) for ix in d_.keys()]):
-                l_.append(d_[str(ix)])
-            self.signs_by_id[set_name] = d_
-            
+            for class_ix in range(self.n_classes):
+                for ix, id in enumerate(labels):
+                    if id == class_ix:
+                        self.safe_append_dict_of_lists(sub_dict, id, ix)
+                self.signs_by_id[set_name] = sub_dict
+
     def get_vbl(self, set_name, vbl_name):
         return self.dd[set_name][vbl_name]
 
@@ -40,23 +56,33 @@ class DataDict:
                                  for line in lines)
         self.n_classes = len(np.unique(self.id2name_dict.keys())[0])
 
+    def plot_sample_sign(self,sign):
+        plt.plot()
+        plt.imshow(sign)
+        plt.show()
+        
     def dump_sample_signs(self):
         print("=== dump_sample_signs ===")
-        for set_name in self.sample_signs.keys():
+        pdb.set_trace()
+        for set_name in self.sample_set_list:
+            X = self.dd[set_name]['X']
             print("\t", set_name)
             dict_list = self.sample_signs[set_name]
             for _dict in dict_list:
                 print("\t\tix = %d, class = %s, name = %s" % (_dict['ix'],
                                                               _dict['sign_class'], _dict['name']))
+                self.plot_sample_sign(X[_dict['ix']])
 
     def select_sample_signs_1st_of_class_by_set(self, set_name_list):
         for set_name in set_name_list:
             _list = self.sample_signs[set_name]
-            for class_ix in self.signs_by_id[set_name].keys():
-                ix = self.signs_by_id[set_name][class_ix][0]
+            d_ = self.signs_by_id[set_name]
+            for class_ix in d_.keys():
+                ix = d_[class_ix][0]
+                #print("FIXME: index %d, class %d" % (ix, class_ix))
                 _list.append({ 'ix' : ix, 'sign_class' : class_ix,
                                'name' : self.id2name_dict[str(class_ix)]})
-        self.dump_sample_signs()
+        #self.dump_sample_signs()
             
     def select_sample_signs_all_per_class(self, set_name_list):
         for set_name in set_name_list:
@@ -150,24 +176,26 @@ class DataDict:
         list_of_file_class_pair_lists = [line.strip().split(',') for line in lines]
         class2img_name_dict = dict()
         for filename, class_ix_s in list_of_file_class_pair_lists:
-            class_ix_s = class_ix_s.strip() # took a while to see _this_ problem
-            if not class_ix_s in class2img_name_dict:
-                class2img_name_dict[class_ix_s] = [filename]
+            class_ix = int(class_ix_s)
+            if not class_ix in class2img_name_dict:
+                class2img_name_dict[class_ix] = [filename]
             else:
-                class2img_name_dict[class_ix_s].append(filename)
+                class2img_name_dict[class_ix].append(filename)
         return class2img_name_dict
 
     def load_csv_file(self, set_name):
-            cind = self.parse_img2class_csv(set_name)
-            #cind -> class 2 image name dict
-            X = list()
-            y = list()
-            for class_str in [str(ix) for ix in sorted([ int(x) for x in cind.keys()])]:
-                for img_name in cind[class_str]:
-                    img_path = self.data_dir + "/" + img_name
-                    X.append(plt.imread(img_path))
-                    y.append(class_str)
-            return np.array(X), np.array(y)
+        cind = self.parse_img2class_csv(set_name)
+        #cind -> class 2 image name dict
+        X = list()
+        y = list()
+        for class_ix in sorted([ int(x) for x in cind.keys()]):
+            for img_name in cind[class_ix]:
+                img_path = self.data_dir + "/" + img_name
+                X.append(plt.imread(img_path))
+                y.append(class_ix)
+        return np.array(X), np.array(y)
+        
+
 
     def load_from_image_dir(self):
         for set_name in self.set_names:
@@ -209,6 +237,9 @@ class DataDict:
 
         # save set_name_list since show_sample_signs may be called much later
         self.sample_set_list =  self.fn_dict_dict[self.load_type]['sample_set_list']
+        x = self.sample_set_list
+        x = len(self.sample_set_list)
+        assert(len(self.sample_set_list) == 1)
 
         self.fn_dict_dict[self.load_type]['load_fn']()
         self.process_class_names() # sets n_classes, id2name_dict

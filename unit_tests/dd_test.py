@@ -16,14 +16,18 @@ import pdb
 import tsc_datadict as tsc_dd
 from sklearn.utils import shuffle
 
-#DD = tsc_dd.DataDict([ 'train', 'valid', 'test'], 'pickle', 'traffic-signs-data')
-#DD.summarize()
-#DD.show_sample_signs()
-#print("X is a ", type(DD.get_vbl('train', 'X').shape[0]))
+def pickled_data():
+    DD = tsc_dd.DataDict([ 'train', 'valid', 'test'], 'pickle', 'traffic-signs-data')
+    DD.summarize()
+    DD.show_sample_signs()
+    print("X is a ", type(DD.get_vbl('train', 'X').shape[0]))
+    n_train = DD.get_vbl('train', 'X').shape[0]
 
-#n_train = DD.get_vbl('train', 'X').shape[0]
+def dir_data():
+    DD = tsc_dd.DataDict([ 'test'], 'image_dir', 'found_signs')
+    DD.summarize()
+    DD.show_sample_signs()
 
-DD = tsc_dd.DataDict([ 'test'], 'image_dir', 'found_signs')
-DD.summarize()
-DD.show_sample_signs()
+pickled_data()
+dir_data()
 print("done")
