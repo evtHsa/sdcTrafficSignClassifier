@@ -29,7 +29,7 @@ class DataDict:
                 d_[class_ix].append(ix)
     
             for ix in sorted([int(ix) for ix in d_.keys()]):
-                l.append(d_[str(ix)])
+                l.append(d_[ix])
             self.signs_by_id[set_name] = d_
             
     def get_vbl(self, set_name, vbl_name):
@@ -52,11 +52,10 @@ class DataDict:
                                            'name' : self.id2name_dict[str(i)]})
             
     def select_sample_signs_all_per_class(self, set_name_list):
-        pdb.set_trace()
         for set_name in set_name_list:
-            for i in range(self.n_classes):
-                X = self.get_vbl(set_name, 'X')
-                for ix in self.signs_by_id[set_name][i]:
+            X = self.get_vbl(set_name, 'X')
+            for class_ix in self.signs_by_id[set_name].keys():
+                for img_ix in self.signs_by_id[set_name][class_ix]:
                     img =X[ix]
                     self.sample_signs.append({ 'sign_class' : i, 'img' : img,
                                                'name' : self.id2name_dict[str(i)]})
