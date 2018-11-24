@@ -43,6 +43,8 @@ class DataDict:
         self.n_classes = len(np.unique(self.id2name_dict.keys())[0])
 
     def select_sample_signs_1st_of_class_by_set(self, set_name_list):
+        print("FIXME: select_sample_signs_1st_of_class_by_set")
+        pdb.set_trace()
         for set_name in set_name_list:
             for i in range(self.n_classes):
                 X = self.get_vbl(set_name, 'X')
@@ -52,6 +54,8 @@ class DataDict:
                                            'name' : self.id2name_dict[str(i)]})
             
     def select_sample_signs_all_per_class(self, set_name_list):
+        print("FIXME: select_sample_signs_all_per_class")
+        pdb.set_trace()
         for set_name in set_name_list:
             X = self.get_vbl(set_name, 'X')
             for class_ix in self.signs_by_id[set_name].keys():
@@ -59,6 +63,8 @@ class DataDict:
                     img =X[ix]
                     self.sample_signs.append({ 'sign_class' : i, 'img' : img,
                                                'name' : self.id2name_dict[str(i)]})
+        print("FIXME: check sample_signs")
+        pdb.set_trace()
 
     def get_sample_signs(self):
         return self.sample_signs
@@ -76,7 +82,7 @@ class DataDict:
         # https://matplotlib.org/gallery/subplots_axes_and_figures/figure_title.html
         #https://stackoverflow.com/questions/10351565/how-do-i-fit-long-title
 
-        duh = True
+        pdb.set_trace()
         img_side = 32 #FIXME: we should calc this in ctor and make as attr
         rows, cols = self.sample_grid_dims()
         print("FIXME:rows = %d, cols = %d" % (rows, cols))
@@ -89,9 +95,6 @@ class DataDict:
         for sample_sign_dict in self.sample_signs:
             sign_class      = sample_sign_dict['sign_class']
             img   = sample_sign_dict['img']
-            if duh:
-                print("type(img) = ", type(img))
-                duh = False
             name = sample_sign_dict['name']
             plt.subplot(rows, cols, i + 1)
             plt.title("\n".join(wrap("\n%d: %s" % (sign_class + 1, name), text_width_char)),
