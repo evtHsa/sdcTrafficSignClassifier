@@ -15,7 +15,6 @@ class DataDict:
     def get_dict(self):
         return self.dd
     
-
     def organize_signs_by_id(self):
         self.signs_by_id = dict()
         d_ = dict()
@@ -27,7 +26,6 @@ class DataDict:
                 d_[label] = list()
             for ix, class_ix in ix_class_list:
                 d_[class_ix].append(ix)
-    
             for ix in sorted([int(ix) for ix in d_.keys()]):
                 l.append(d_[ix])
             self.signs_by_id[set_name] = d_
@@ -42,29 +40,40 @@ class DataDict:
                                  for line in lines)
         self.n_classes = len(np.unique(self.id2name_dict.keys())[0])
 
+    def dump_sample_signs(self):
+        print("=== dump_sample_signs ===")
+        for set_name in self.sample_signs.keys():
+            print("\t", set_name)
+            dict_list = self.sample_signs[set_name]
+            for _dict in dict_list:
+                print("\t\tix = %d, class = %d, name = %s" % (_dict['ix'],
+                                                              _dict['sign_class'], _dict['name']))
+
     def select_sample_signs_1st_of_class_by_set(self, set_name_list):
-        print("FIXME: select_sample_signs_1st_of_class_by_set")
-        pdb.set_trace()
+        # save set_name_list since show_sample_signs may be called much later
+        self.sample_set_list = set_name_list
         for set_name in set_name_list:
-            for i in range(self.n_classes):
-                X = self.get_vbl(set_name, 'X')
-                ix = self.signs_by_id[set_name][i][0]
-                img =X[ix]
-                self.sample_signs.append({ 'sign_class' : i, 'img' : img,
-                                           'name' : self.id2name_dict[str(i)]})
+            _list = self.sample_signs[set_name]
+            for class_ix in self.signs_by_id[set_name].keys():
+                ix = self.signs_by_id[set_name][class_ix][0]
+                _list.append({ 'ix' : ix, 'sign_class' : class_ix,
+                               'name' : self.id2name_dict[str(class_ix)]})
+        self.dump_sample_signs()
             
     def select_sample_signs_all_per_class(self, set_name_list):
+        # save set_name_list since show_sample_signs may be called much later
+        self.sample_set_list = set_name_list
         print("FIXME: select_sample_signs_all_per_class")
-        pdb.set_trace()
+
         for set_name in set_name_list:
-            X = self.get_vbl(set_name, 'X')
-            for class_ix in self.signs_by_id[set_name].keys():
-                for img_ix in self.signs_by_id[set_name][class_ix]:
-                    img =X[ix]
-                    self.sample_signs.append({ 'sign_class' : i, 'img' : img,
-                                               'name' : self.id2name_dict[str(i)]})
-        print("FIXME: check sample_signs")
+            _list = self.sample_signs[set_name]
+            for class_ix_s in self.signs_by_id[set_name].keys():
+                for img_ix in self.signs_by_id[set_name][class_ix_s]:
+                    _list.append({ 'ix': img_ix, 'sign_class' : i,
+                                   'name' : self.id2name_dict[str(i)]})
+        self.dump_sample_signs()
         pdb.set_trace()
+        print("FIXME: check sample_signs")
 
     def get_sample_signs(self):
         return self.sample_signs
@@ -82,29 +91,34 @@ class DataDict:
         # https://matplotlib.org/gallery/subplots_axes_and_figures/figure_title.html
         #https://stackoverflow.com/questions/10351565/how-do-i-fit-long-title
 
-        pdb.set_trace()
         img_side = 32 #FIXME: we should calc this in ctor and make as attr
         rows, cols = self.sample_grid_dims()
-        print("FIXME:rows = %d, cols = %d" % (rows, cols))
         font_size = 10 # FIXME:hardcoded badness
         text_width_char = 22
         fig_height = 24
         fig_width = 24
         plt.figure(1, figsize=(fig_height, fig_width))
-        i = 0
-        for sample_sign_dict in self.sample_signs:
-            sign_class      = sample_sign_dict['sign_class']
-            img   = sample_sign_dict['img']
-            name = sample_sign_dict['name']
-            plt.subplot(rows, cols, i + 1)
-            plt.title("\n".join(wrap("\n%d: %s" % (sign_class + 1, name), text_width_char)),
-                      fontsize=font_size)
-            plt.imshow(img)
-            plt.axis('off')
-            i += 1
-        plt.tight_layout(pad=3., w_pad=1., h_pad=4.0)
-        plt.show()
-        plt.close()
+
+        for set_name in self.sample_set_list:
+            X = self.get_vbl(set_name, 'X')
+            i = 0
+            for ssd in self.sample_signs: #ssd -> sample sign dict
+                sign_class      = ssd['sign_class']
+                img   = X[ssd['ix']]
+                name = ssd['name']
+                print("FIXME: ix = %d, class = %d, name = %s" %(ssd['ix'],
+                                                                sign_class, name))
+                plt.subplot(rows, cols, i + 1)
+                plt.title("\n".join(wrap("\n%d: %s" % (sign_class + 1, name),
+                                         text_width_char)),
+                          fontsize=font_size)
+                plt.imshow(img)
+                plt.axis('off')
+                i += 1
+                pdb.set_trace()
+                plt.tight_layout(pad=3., w_pad=1., h_pad=4.0)
+                plt.show()
+                plt.close()
 
     def show_distribution(self, set_name):
         plt.bar(range(self.n_classes), [len(s) for s in self.signs_by_id[set_name]],
@@ -146,12 +160,12 @@ class DataDict:
         lines  = f.readlines()[1:]
         list_of_file_class_pair_lists = [line.strip().split(',') for line in lines]
         class2img_name_dict = dict()
-        for filename, class_ix in list_of_file_class_pair_lists:
-            class_ix = class_ix.strip() # took a while to see _this_ problem
-            if not class_ix in class2img_name_dict:
-                class2img_name_dict[class_ix] = [filename]
+        for filename, class_ix_s in list_of_file_class_pair_lists:
+            class_ix_s = class_ix_s.strip() # took a while to see _this_ problem
+            if not class_ix_s in class2img_name_dict:
+                class2img_name_dict[class_ix_s] = [filename]
             else:
-                class2img_name_dict[class_ix].append(filename)
+                class2img_name_dict[class_ix_s].append(filename)
         return class2img_name_dict
 
     def load_csv_file(self, set_name):
@@ -186,7 +200,9 @@ class DataDict:
         self.set_names = set_names
         self.data_dir = data_dir
         self.dd = dict()
-        self.sample_signs = list()
+        self.sample_signs = dict()
+        for set_name in set_names:
+            self.sample_signs[set_name] = list()
 
         self.load_type = load_type
         assert(self.load_type == 'pickle' or self.load_type == 'image_dir')
@@ -205,8 +221,9 @@ class DataDict:
         self.fn_dict_dict[self.load_type]['load_fn']()
         self.process_class_names() # sets n_classes, id2name_dict
         self.organize_signs_by_id()
-        self.fn_dict_dict[self.load_type]['sample_select'](
-            self.fn_dict_dict[self.load_type]['sample_set_list'])
+        sample_select_fn = self.fn_dict_dict[self.load_type]['sample_select']
+        sample_select_fn(self.fn_dict_dict[self.load_type]['sample_set_list'])
+        
         if show_sample:
             self.show_sample_signs()
         if show_distrib:
