@@ -135,9 +135,16 @@ class DataDict:
         plt.show()
         plt.close()
 
+    def zero_fill_counts(self, set_name):
+        dict_ixes_by_class = self.signs_by_id[set_name]
+        counts = [0] * self.n_classes # all zeros
+        for ix in dict_ixes_by_class.keys() :
+            counts[ix]  = len(dict_ixes_by_class[ix]) # fixup what shd not be 0
+        return counts
+    
     def show_distribution(self, set_name):
-        plt.bar(range(self.n_classes), [len(s) for s in self.signs_by_id[set_name]],
-                align='center')
+        counts = self.zero_fill_counts(set_name)
+        plt.bar(range(self.n_classes), counts, align='center')
         plt.title("Distribution(%s)" % set_name)
         plt.xticks(range(0, self.n_classes, 5))
         plt.show()

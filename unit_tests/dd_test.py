@@ -27,7 +27,8 @@ def dir_data():
     DD = tsc_dd.DataDict([ 'test'], 'image_dir', 'found_signs')
     DD.summarize()
     DD.show_sample_signs()
+    DD.show_distributions()
 
-pickled_data()
+#pickled_data()
 dir_data()
 print("done")
