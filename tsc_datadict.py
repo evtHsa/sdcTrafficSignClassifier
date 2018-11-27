@@ -159,13 +159,21 @@ class DataDict:
         self.dd[set_name]['X'] = np.array([f(img)
                                   for img in self.dd[set_name]['X']])
         
-    def normalize_images(self):
-        # do this after displaying the sample signs
-        for set_name in self.set_names:
-            self.normalize_images_of_set(set_name)
-
+    def resize_images_of_set(self, set_name):
+        #f = lambda img: cv2.resize(img, (32, 32))
+        #self.dd[set_name]['X'] = np.array([f(img)
+         #                         for img in self.dd[set_name]['X']])
+        new_list = list()
+        for img in self.dd[set_name]['X']:
+            tmp = cv2.resize(img, (32, 32))
+            #FIXME:pdb.set_trace()
+            new_list.append(tmp)
+        self.dd[set_name]['X'] = np.array(new_list)
+        
     def preprocess_images(self):
-        self.normalize_images()
+        for set_name in self.set_names:
+            self.resize_images_of_set(set_name)
+            #self.normalize_images_of_set(set_name)
         
 
     def summarize(self):
@@ -216,7 +224,7 @@ class DataDict:
             self.dd[set_name] = { 'X' : pd['features'], 'y' : pd['labels']}
             
     def __init__(self, set_names, load_type, data_dir, show_sample=False,
-                 show_distrib=False, summarize=False, do_pre_pro=False):
+                 show_distrib=False, summarize=False, do_pre_pro=True):
         
         assert(set_names != None)
         assert(type(set_names) is list)

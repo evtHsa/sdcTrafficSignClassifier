@@ -99,9 +99,9 @@ def evaluate(X_data, y_data):
 ## Features and Labels
 DD = tsc_dd.DataDict([ 'test'], 'image_dir', 'found_signs')
 DD.summarize()
-#DD.show_sample_signs()
-X = DD.get_vbl('test', 'X')
-y = DD.get_vbl('test', 'y')
+DD.show_sample_signs()
+X_test = DD.get_vbl('test', 'X')
+y_test = DD.get_vbl('test', 'y')
 x = tf.placeholder(tf.float32, (None, 32, 32, 3))
 y = tf.placeholder(tf.int32, (None))
 one_hot_y = tf.one_hot(y, DD.n_classes)
@@ -117,7 +117,7 @@ with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
     saver = tf.train.import_meta_graph('lenet.meta')
     saver.restore(sess, "./lenet")
-    evaluate(X, y)
+    evaluate(X_test, y_test)
     pdb.set_trace()
 
 main()
