@@ -6,3 +6,5 @@ models
 *.p
 *~
 __pycache__/
+*.ipynb
+lenet.*
