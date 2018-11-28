@@ -63,7 +63,6 @@ class DataDict:
         
     def dump_sample_signs(self):
         print("=== dump_sample_signs ===")
-        pdb.set_trace()
         for set_name in self.sample_set_list:
             X = self.dd[set_name]['X']
             print("\t", set_name)
@@ -166,7 +165,6 @@ class DataDict:
         new_list = list()
         for img in self.dd[set_name]['X']:
             tmp = cv2.resize(img, (32, 32))
-            #FIXME:pdb.set_trace()
             new_list.append(tmp)
         self.dd[set_name]['X'] = np.array(new_list)
         
@@ -174,8 +172,6 @@ class DataDict:
         for set_name in self.set_names:
             self.resize_images_of_set(set_name)
             #self.normalize_images_of_set(set_name)
-        
-
     def summarize(self):
         print("loaded from ", self.load_type)
         for set in self.set_names:

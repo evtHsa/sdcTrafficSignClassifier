@@ -29,6 +29,6 @@ def dir_data():
     DD.show_sample_signs()
     DD.show_distributions()
 
-#pickled_data()
+pickled_data()
 dir_data()
 print("done")

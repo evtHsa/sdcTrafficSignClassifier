@@ -12,7 +12,7 @@ rate = 0.001
 mu = 0 
 sigma = 0.1
 EPOCHS = 30
-BATCH_SIZE = 96
+BATCH_SIZE = 2
 GOOD_ENOUGH = 0.935
 
 # debug stuff
@@ -90,16 +90,20 @@ def evaluate(X_data, y_data):
     sess = tf.get_default_session()
     for offset in range(0, num_examples, BATCH_SIZE):
         batch_x, batch_y = X_data[offset:offset+BATCH_SIZE], y_data[offset:offset+BATCH_SIZE]
-        pdb.set_trace()
         accuracy = sess.run(accuracy_operation, feed_dict={x: batch_x, y: batch_y})
+        print("accuracy = ", accuracy)
+        pdb.set_trace()
         total_accuracy += (accuracy * len(batch_x))
-    return total_accuracy / num_examples
+    ret = total_accuracy / num_examples
+    pdb.set_trace()
+    return ret
 
 
 ## Features and Labels
 DD = tsc_dd.DataDict([ 'test'], 'image_dir', 'found_signs')
 DD.summarize()
 DD.show_sample_signs()
+DD.show_distributions()
 X_test = DD.get_vbl('test', 'X')
 y_test = DD.get_vbl('test', 'y')
 x = tf.placeholder(tf.float32, (None, 32, 32, 3))
@@ -117,9 +121,9 @@ with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
     saver = tf.train.import_meta_graph('lenet.meta')
     saver.restore(sess, "./lenet")
-    evaluate(X_test, y_test)
+    acc = evaluate(X_test, y_test)
     pdb.set_trace()
+    print("accuracy = %.2ff" % acc)
 
-main()
 print("done")
 print("FIXME: what happened to the histogram")
