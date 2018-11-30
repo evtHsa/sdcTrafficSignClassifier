@@ -19,6 +19,7 @@ GOOD_ENOUGH = 0.935
 import pdb
 
 # support code
+import numpy as np
 import tsc_datadict as tsc_dd
 import tensorflow as tf
 
@@ -91,11 +92,8 @@ def evaluate(X_data, y_data):
     for offset in range(0, num_examples, BATCH_SIZE):
         batch_x, batch_y = X_data[offset:offset+BATCH_SIZE], y_data[offset:offset+BATCH_SIZE]
         accuracy = sess.run(accuracy_operation, feed_dict={x: batch_x, y: batch_y})
-        print("accuracy = ", accuracy)
-        pdb.set_trace()
         total_accuracy += (accuracy * len(batch_x))
     ret = total_accuracy / num_examples
-    pdb.set_trace()
     return ret
 
 
@@ -111,19 +109,42 @@ y = tf.placeholder(tf.int32, (None))
 one_hot_y = tf.one_hot(y, DD.n_classes)
 
 logits = LeNet(x)
+
+prediction = tf.argmax(logits, 1)
 correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(one_hot_y, 1))
 accuracy_operation = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
-
-
+saver=tf.train.Saver()
+## Predict Sign Types
+with tf.Session() as sess:
+    saver.restore(sess, tf.train.latest_checkpoint('.'))
+    predictions = sess.run(prediction, feed_dict={x: X_test})
+    
+print('\nPrediction   Ground Truth')
+print('----------   ------------')    
+for p_i, y_i in zip(predictions, y_test):
+    print('    {0:2d}            {1:2d}     '.format(p_i, y_i))
 
 with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
-    saver = tf.train.import_meta_graph('lenet.meta')
-    saver.restore(sess, "./lenet")
+    saver.restore(sess, tf.train.latest_checkpoint('.'))
     acc = evaluate(X_test, y_test)
-    pdb.set_trace()
     print("accuracy = %.2ff" % acc)
 
+## Calculate the accuracy for the download images as a percent correct
+with tf.Session() as sess:
+    saver.restore(sess, tf.train.latest_checkpoint('.'))
+
+    new_accuracy = evaluate(X_test, y_test)
+    print("\nNew Accuracy = {:.3f}".format(new_accuracy))
+
+#output top 5 softmax probabilities
+with tf.Session() as sess:
+    saver.restore(sess, tf.train.latest_checkpoint('.'))
+    softmaxes = sess.run(tf.nn.softmax(logits), feed_dict={x: X_test})
+    top5, _ = sess.run(tf.nn.top_k(softmaxes, k=5))
+    
+np.set_printoptions(precision=5)
+print('\n' + str(top5))
+
 print("done")
-print("FIXME: what happened to the histogram")

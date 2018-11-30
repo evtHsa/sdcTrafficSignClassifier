@@ -171,7 +171,7 @@ class DataDict:
     def preprocess_images(self):
         for set_name in self.set_names:
             self.resize_images_of_set(set_name)
-            #self.normalize_images_of_set(set_name)
+            self.normalize_images_of_set(set_name)
     def summarize(self):
         print("loaded from ", self.load_type)
         for set in self.set_names:

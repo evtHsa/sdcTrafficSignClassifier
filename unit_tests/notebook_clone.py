@@ -14,6 +14,9 @@ import pdb
 
 # support code
 import tsc_datadict as tsc_dd
+import parm_dict
+pd = parm_dict.parm_dict
+
 from sklearn.utils import shuffle
 
 #step 0
@@ -69,12 +72,18 @@ y_test = DD.get_vbl('test', 'y')
 import tensorflow as tf
 
 ## hyperparms
-rate = 0.001 
-mu = 0 
-sigma = 0.1
-EPOCHS = 30
-BATCH_SIZE = 96
-GOOD_ENOUGH = 0.935
+rate = pd['learning_rate']
+print("rate = ", rate)
+mu = pd['mu']
+print("mu = ", mu)
+sigma = pd['sigma']
+print("sigma = ", sigma)
+EPOCHS = pd['EPOCHS']
+print("EPOCHS = ", EPOCHS)
+BATCH_SIZE = pd['BATCH_SIZE']
+print("BATCH_SIZE = ", BATCH_SIZE)
+GOOD_ENOUGH = pd['GOOD_ENOUGH']
+print("GOOD_ENOUGH = ", GOOD_ENOUGH)
 
 # ??: options for implementing
 #    1) simple adaptation of linear script in notebook_clone.py
