@@ -216,3 +216,7 @@ with tf.Session() as sess:
     test_accuracy = evaluate(X_test, y_test)
     print("Test Accuracy = {:.3f}".format(test_accuracy))
 
+#######################################################
+### no need to continue, was a damned ipynb non determinism
+#######################################################
+
