@@ -62,7 +62,34 @@ DD.show_sample_signs()
 DD.show_distributions()
 
 ##cell
+# define these variables used in the model to reduce typing
+X_train = DD.get_vbl('train', 'X')
+y_train = DD.get_vbl('train', 'y')
+X_validation = DD.get_vbl('valid', 'X')
+y_validation = DD.get_vbl('valid', 'y')
+X_test = DD.get_vbl('test', 'X')
+y_test = DD.get_vbl('test', 'y')
+
+###+++++++++ setting of hyperparms done at start, not here as in nc
+
 ##cell
+### Replace each question mark with the appropriate value. 
+### Use python, pandas or numpy methods rather than hard coding the results
+import numpy as np
+
+n_train = DD.get_vbl('train', 'X').shape[0]
+n_validation = DD.get_vbl('valid', 'X').shape[0]
+n_test = DD.get_vbl('test', 'X').shape[0]
+_X = DD.get_vbl('valid', 'X')
+image_shape = "(" + str(_X.shape[1]) + ", " + str(_X.shape[2]) + ',' + str(_X.shape[3]) + ")"
+n_classes = DD.n_classes
+
+print("Number of training examples =", n_train)
+print("Number of validation examples =", n_validation)
+print("Number of testing examples =", n_test)
+print("Image data shape =", image_shape)
+print("Number of classes =", n_classes)
+
 ##cell
 ##cell
 ##cell
