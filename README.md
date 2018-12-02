@@ -1,58 +1,172 @@
-## Project: Build a Traffic Sign Recognition Program
-[![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
+﻿# **Traffic Sign Recognition** 
 
-Overview
----
-In this project, you will use what you've learned about deep neural networks and convolutional neural networks to classify traffic signs. You will train and validate a model so it can classify traffic sign images using the [German Traffic Sign Dataset](http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset). After the model is trained, you will then try out your model on images of German traffic signs that you find on the web.
-
-We have included an Ipython notebook that contains further instructions 
-and starter code. Be sure to download the [Ipython notebook](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb). 
-
-We also want you to create a detailed writeup of the project. Check out the [writeup template](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/writeup_template.md) for this project and use it as a starting point for creating your own writeup. The writeup can be either a markdown file or a pdf document.
-
-To meet specifications, the project will require submitting three files: 
-* the Ipython notebook with the code
-* the code exported as an html file
-* a writeup report either as a markdown or pdf file 
-
-Creating a Great Writeup
----
-A great writeup should include the [rubric points](https://review.udacity.com/#!/rubrics/481/view) as well as your description of how you addressed each point.  You should include a detailed description of the code used in each step (with line-number references and code snippets where necessary), and links to other supporting documents or external references.  You should include images in your writeup to demonstrate how your code works with examples.  
-
-All that said, please be concise!  We're not looking for you to write a book here, just a brief description of how you passed each rubric point, and references to the relevant code :). 
-
-You're not required to use markdown for your writeup.  If you use another method please just submit a pdf of your writeup.
-
-The Project
----
-The goals / steps of this project are the following:
-* Load the data set
+## Goals
+* Load the data set (see below for links to the project data set)
 * Explore, summarize and visualize the data set
 * Design, train and test a model architecture
 * Use the model to make predictions on new images
 * Analyze the softmax probabilities of the new images
 * Summarize the results with a written report
 
-### Dependencies
-This lab requires:
 
-* [CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit)
+[//]: # (Image References)
 
-The lab environment can be created with CarND Term1 Starter Kit. Click [here](https://github.com/udacity/CarND-Term1-Starter-Kit/blob/master/README.md) for the details.
+[image1]: ./examples/selected_pickle_signs.png "Selected Training Signs"
+[image2]: ./examples/histo_train.png "Training Set"
+[image3]: ./examples/histo_valid.png "Validation Set"
+[image4]: ./examples/histo_test.png "Test Set"
+[image5]: ./examples/lenet.png "LeNet"
+[image6]: ./found_signs/00001.jpg "30kph"
+[image7]: ./found_signs/00006.jpg "caution"
+[image8]: ./found_signs/00009.jpg "geradeaus"
+[image9]: ./found_signs/00021.jpg "rechts"
+[image10]: ./found_signs/00057.jpg "ampeln"
+[image11]: ./found_signs/00111.jpg "stop"
+[image12]: ./found_signs/00115.jpg "60kph"
 
-### Dataset and Repository
+## Rubric Points
+### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
 
-1. Download the data set. The classroom has a link to the data set in the "Project Instructions" content. This is a pickled dataset in which we've already resized the images to 32x32. It contains a training, validation and test set.
-2. Clone the project, which contains the Ipython notebook and the writeup template.
-```sh
-git clone https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project
-cd CarND-Traffic-Sign-Classifier-Project
-jupyter notebook Traffic_Sign_Classifier.ipynb
-```
+---
+### Writeup / README
 
-### Requirements for Submission
-Follow the instructions in the `Traffic_Sign_Classifier.ipynb` notebook and write the project report using the writeup template as a guide, `writeup_template.md`. Submit the project code and writeup document.
+#### 1. Provide a Writeup / README that includes all the rubric points and how you addressed each one. You can submit your writeup as markdown or pdf. You can use this template as a guide for writing the report. The submission includes the project code.
+## **links**
+ - my [project code](https://github.com/evtHsa/sdcTrafficSignClassifier/blob/master/Traffic_Sign_Classifier.ipynb)
+ - the [repository containing my project code](https://github.com/evtHsa/sdcTrafficSignClassifier/blob/master/)
+## Notes on the Code
+ - A non-trivial (270 lines) part of the implementation is in **tsc_datadict.py** which
+	 - loads the data from a 
+		 - pickle file 
+		 - or a directory containing
+			 - image files
+			 - a csv file of the format filename, label
+	 - calculates the number of classes and creates a dictionary mapping classes to class names from **signnames.csv**
+	 - creates a dictonary mapping from the classes to the indices of the images in the dataset of that class(please see detailed comments in the code for the **organize_signs_by_id**() method)
+	 - selects signs to be displayed in the dataset visualization by two different methods
+		 - for the pickled data set, select the first index in each class
+		 - for the downloaded signs, select all the signs
+	 - provides methods to be called later, from the ipynb, to:
+		 - show the sample signs
+		 - show histograms of the class distribution of the signs in the data set for the set of categories(ex: train, valid, test) passed to the datadict constructor
+		 - preprocess the images in the dataset
+		 - print a summary of the dataset
 
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
+### Data Set Summary & Exploration
+
+#### 1. Provide a basic summary of the data set. In the code, the analysis should be done using python, numpy and/or pandas methods rather than hardcoding results manually.
+
+The summary is calculated by the **__ init__()**  method and displayed by the **summarize**() method of the **DataDict** class. The result, from the ipynb, is:
+
+Number of training examples = 34799
+Number of validation examples = 4410
+Number of testing examples = 12630
+Image data shape = (32, 32,3)
+Number of classes = 43
+
+#### 2. Include an exploratory visualization of the dataset.
+
+In the selected signs(selection criteria described above) we can clearly see the effects of normalization and variations in image sharpness and lighting.
+
+
+![ ][image1]
+
+Here are the histograms showing the distribution of the signs instances by class
+![ ][image2]
+![ ][image3]
+![ ][image4]
+Visually, they seem quite similar
+
+### Design and Test a Model Architecture
+
+#### 1. Preprocessing
+
+I only implemented normalization of rgb values to [-1, 1] and resizing to 32x32x3. Resizing was required because the image(discussed later) downloaded from the web were larger and so did not work with the model's input layer. Normalization accounted for a bit less than 2% improved accuracy which was sufficient to get over the 93% threshold.
+
+#### 2. Model Architecture
+The model was a straight forward adaptation of my the model from the LeNet lab as described in the class video. The input layer was changed to 32x32x3 and the output changed from 10 to n_classes(43)
+![ ][image5]
+
+My final model consisted of the following layers:
+
+| Layer         		|     Description	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| Input         		| 32x32x3 RGB image   							| 
+| Convolution 5x5x3     	| 1x1 stride, valid padding, outputs 28x28x6 	|
+| RELU					|												|
+| Max pooling	      	| 2x2 stride, Output = 14x14x6, valid padding 				|
+| Convolution 5x5x3	    | 1x1 stride, valid padding,Output = 10x10x16     									|
+| Max pooling	      	| 2x2 stride, Output = 5x5x16, valid padding 				|
+| Flatten	      	| 5x5x16 -> 400 				|
+| Fully connected		| 400 -> 120 |
+| Relu||
+| Fully connected@		| 120 -> 84 |
+| Relu||
+| Fully connected@		| 84 -> 43 |
+|
+ 
+
+
+#### 3.  Model Training
+I have a fairly robust CPU so I used that for training with the following hyperparameters:
+learning_rate -> 0.00095
+mu -> 0
+sigma -> 0.1
+EPOCHS -> 128
+BATCH_SIZE -> 64
+GOOD_ENOUGH -> 0.97
+
+I did not use dropout and I believe dropout and/or generating additional images with affine transforms and lighting changes would produce better results. Perhaps also increasing the learning rate would help. With the current set of hyperparameters there seemed to be little improvement after the 100th epoch.
+
+
+To train the model, I used an ....
+
+#### 4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
+
+I chose LeNet because it was suggested in the course videos. Even though LeNet was originally designed for recognizing MNIST characters, my potentially naive view of why that was suggested was that recognizing "segments" in characters and their spatial relationships was relevant to sign classification because those attributes are present in signs.
+
+My final model results were:
+* validation set accuracy of 0.947(highest for any epoch was 0.952)
+* test set accuracy of 0.930
+
+### Test a Model on New Images
+
+#### 1. Download German Traffic Signs
+
+I downloaded GTSRB_Final_Test_Images.zip from http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset
+
+Here are seven German traffic signs that I found on the web:
+![ ][image6]![ ][image7]![ ][image8]![ ][image9]![ ][image10]![ ][image11]![ ][image12]
+
+
+
+#### 2. Model Performance on Downloaded Signs
+
+Here are the results of the prediction:
+
+| Image			        |     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| 30 kph      		| 30 kph   							| 
+| caution     			| U-turn 							|
+| straight					| straight				|
+| right	      		| right					 				|
+| signals			| signals    	|| stop|stop|
+| 60 kpn | 60 kph |
+
+
+The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+
+#### 3. Predicition Certainty
+The code for making predictions on my final model is located in the 2h cell of the Ipython notebook.
+
+As can be seen from the following the model is highly certain (1.0). This is doubtless a consequence of picking images that were sharp and well lit. It is interesting to know that not all of the  lower 4 predictions are zero. Some of them are very small non zero values.
+[[1.00000e+00 1.45429e-24 7.08256e-35 0.00000e+00 0.00000e+00]
+ [1.00000e+00 1.84673e-38 0.00000e+00 0.00000e+00 0.00000e+00]
+ [1.00000e+00 1.04243e-22 9.17256e-32 8.08734e-32 5.27130e-32]
+ [1.00000e+00 0.00000e+00 0.00000e+00 0.00000e+00 0.00000e+00]
+ [1.00000e+00 0.00000e+00 0.00000e+00 0.00000e+00 0.00000e+00]
+ [1.00000e+00 0.00000e+00 0.00000e+00 0.00000e+00 0.00000e+00]
+ [1.00000e+00 0.00000e+00 0.00000e+00 0.00000e+00 0.00000e+00]]
+
+
 

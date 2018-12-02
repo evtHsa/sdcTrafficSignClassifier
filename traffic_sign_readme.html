@@ -1,0 +1,223 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>traffic_sign_readme</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h1 id="traffic-sign-recognition"><strong>Traffic Sign Recognition</strong></h1>
+<h2 id="goals">Goals</h2>
+<ul>
+<li>Load the data set (see below for links to the project data set)</li>
+<li>Explore, summarize and visualize the data set</li>
+<li>Design, train and test a model architecture</li>
+<li>Use the model to make predictions on new images</li>
+<li>Analyze the softmax probabilities of the new images</li>
+<li>Summarize the results with a written report</li>
+</ul>
+<h2 id="rubric-points">Rubric Points</h2>
+<h3 id="here-i-will-consider-the-rubric-points-individually-and-describe-how-i-addressed-each-point-in-my-implementation.">Here I will consider the <a href="https://review.udacity.com/#!/rubrics/481/view">rubric points</a> individually and describe how I addressed each point in my implementation.</h3>
+<hr>
+<h3 id="writeup--readme">Writeup / README</h3>
+<h4 id="provide-a-writeup--readme-that-includes-all-the-rubric-points-and-how-you-addressed-each-one.-you-can-submit-your-writeup-as-markdown-or-pdf.-you-can-use-this-template-as-a-guide-for-writing-the-report.-the-submission-includes-the-project-code.">1. Provide a Writeup / README that includes all the rubric points and how you addressed each one. You can submit your writeup as markdown or pdf. You can use this template as a guide for writing the report. The submission includes the project code.</h4>
+<h2 id="links"><strong>links</strong></h2>
+<ul>
+<li>my <a href="https://github.com/evtHsa/sdcTrafficSignClassifier/blob/master/Traffic_Sign_Classifier.ipynb">project code</a></li>
+<li>the <a href="https://github.com/evtHsa/sdcTrafficSignClassifier/blob/master/">repository containing my project code</a></li>
+</ul>
+<h2 id="notes-on-the-code">Notes on the Code</h2>
+<ul>
+<li>A non-trivial (270 lines) part of the implementation is in <strong>tsc_datadict.py</strong> which
+<ul>
+<li>loads the data from a
+<ul>
+<li>pickle file</li>
+<li>or a directory containing
+<ul>
+<li>image files</li>
+<li>a csv file of the format filename, label</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>calculates the number of classes and creates a dictionary mapping classes to class names from <strong>signnames.csv</strong></li>
+<li>creates a dictonary mapping from the classes to the indices of the images in the dataset of that class(please see detailed comments in the code for the <strong>organize_signs_by_id</strong>() method)</li>
+<li>selects signs to be displayed in the dataset visualization by two different methods
+<ul>
+<li>for the pickled data set, select the first index in each class</li>
+<li>for the downloaded signs, select all the signs</li>
+</ul>
+</li>
+<li>provides methods to be called later, from the ipynb, to:
+<ul>
+<li>show the sample signs</li>
+<li>show histograms of the class distribution of the signs in the data set for the set of categories(ex: train, valid, test) passed to the datadict constructor</li>
+<li>preprocess the images in the dataset</li>
+<li>print a summary of the dataset</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="data-set-summary--exploration">Data Set Summary &amp; Exploration</h3>
+<h4 id="provide-a-basic-summary-of-the-data-set.-in-the-code-the-analysis-should-be-done-using-python-numpy-andor-pandas-methods-rather-than-hardcoding-results-manually.">1. Provide a basic summary of the data set. In the code, the analysis should be done using python, numpy and/or pandas methods rather than hardcoding results manually.</h4>
+<p>The summary is calculated by the <strong>__ init__()</strong>  method and displayed by the <strong>summarize</strong>() method of the <strong>DataDict</strong> class. The result, from the ipynb, is:</p>
+<p>Number of training examples = 34799<br>
+Number of validation examples = 4410<br>
+Number of testing examples = 12630<br>
+Image data shape = (32, 32,3)<br>
+Number of classes = 43</p>
+<h4 id="include-an-exploratory-visualization-of-the-dataset.">2. Include an exploratory visualization of the dataset.</h4>
+<p>In the selected signs(selection criteria described above) we can clearly see the effects of normalization and variations in image sharpness and lighting.</p>
+<p><img src="./examples/selected_pickle_signs.png" alt=" " title="Selected Training Signs"></p>
+<p>Here are the histograms showing the distribution of the signs instances by class<br>
+<img src="./examples/histo_train.png" alt=" " title="Training Set"><br>
+<img src="./examples/histo_valid.png" alt=" " title="Validation Set"><br>
+<img src="./examples/histo_test.png" alt=" " title="Test Set"><br>
+Visually, they seem quite similar</p>
+<h3 id="design-and-test-a-model-architecture">Design and Test a Model Architecture</h3>
+<h4 id="preprocessing">1. Preprocessing</h4>
+<p>I only implemented normalization of rgb values to [-1, 1] and resizing to 32x32x3. Resizing was required because the image(discussed later) downloaded from the web were larger and so did not work with the model’s input layer. Normalization accounted for a bit less than 2% improved accuracy which was sufficient to get over the 93% threshold.</p>
+<h4 id="model-architecture">2. Model Architecture</h4>
+<p>The model was a straight forward adaptation of my the model from the LeNet lab as described in the class video. The input layer was changed to 32x32x3 and the output changed from 10 to n_classes(43)<br>
+<img src="./examples/lenet.png" alt=" " title="LeNet"></p>
+<p>My final model consisted of the following layers:</p>
+
+<table>
+<thead>
+<tr>
+<th align="center">Layer</th>
+<th align="center">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">Input</td>
+<td align="center">32x32x3 RGB image</td>
+</tr>
+<tr>
+<td align="center">Convolution 5x5x3</td>
+<td align="center">1x1 stride, valid padding, outputs 28x28x6</td>
+</tr>
+<tr>
+<td align="center">RELU</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">Max pooling</td>
+<td align="center">2x2 stride, Output = 14x14x6, valid padding</td>
+</tr>
+<tr>
+<td align="center">Convolution 5x5x3</td>
+<td align="center">1x1 stride, valid padding,Output = 10x10x16</td>
+</tr>
+<tr>
+<td align="center">Max pooling</td>
+<td align="center">2x2 stride, Output = 5x5x16, valid padding</td>
+</tr>
+<tr>
+<td align="center">Flatten</td>
+<td align="center">5x5x16 -&gt; 400</td>
+</tr>
+<tr>
+<td align="center">Fully connected</td>
+<td align="center">400 -&gt; 120</td>
+</tr>
+<tr>
+<td align="center">Relu</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">Fully connected@</td>
+<td align="center">120 -&gt; 84</td>
+</tr>
+<tr>
+<td align="center">Relu</td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">Fully connected@</td>
+<td align="center">84 -&gt; 43</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+</tbody>
+</table><h4 id="model-training">3.  Model Training</h4>
+<p>I have a fairly robust CPU so I used that for training with the following hyperparameters:<br>
+learning_rate -&gt; 0.00095<br>
+mu -&gt; 0<br>
+sigma -&gt; 0.1<br>
+EPOCHS -&gt; 128<br>
+BATCH_SIZE -&gt; 64<br>
+GOOD_ENOUGH -&gt; 0.97</p>
+<p>I did not use dropout and I believe dropout and/or generating additional images with affine transforms and lighting changes would produce better results. Perhaps also increasing the learning rate would help. With the current set of hyperparameters there seemed to be little improvement after the 100th epoch.</p>
+<p>To train the model, I used an …</p>
+<h4 id="describe-the-approach-taken-for-finding-a-solution-and-getting-the-validation-set-accuracy-to-be-at-least-0.93.-include-in-the-discussion-the-results-on-the-training-validation-and-test-sets-and-where-in-the-code-these-were-calculated.-your-approach-may-have-been-an-iterative-process-in-which-case-outline-the-steps-you-took-to-get-to-the-final-solution-and-why-you-chose-those-steps.-perhaps-your-solution-involved-an-already-well-known-implementation-or-architecture.-in-this-case-discuss-why-you-think-the-architecture-is-suitable-for-the-current-problem.">4. Describe the approach taken for finding a solution and getting the validation set accuracy to be at least 0.93. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.</h4>
+<p>I chose LeNet because it was suggested in the course videos. Even though LeNet was originally designed for recognizing MNIST characters, my potentially naive view of why that was suggested was that recognizing “segments” in characters and their spatial relationships was relevant to sign classification because those attributes are present in signs.</p>
+<p>My final model results were:</p>
+<ul>
+<li>validation set accuracy of 0.947(highest for any epoch was 0.952)</li>
+<li>test set accuracy of 0.930</li>
+</ul>
+<h3 id="test-a-model-on-new-images">Test a Model on New Images</h3>
+<h4 id="download-german-traffic-signs">1. Download German Traffic Signs</h4>
+<p>I downloaded GTSRB_Final_Test_Images.zip from <a href="http://benchmark.ini.rub.de/?section=gtsrb&amp;subsection=dataset">http://benchmark.ini.rub.de/?section=gtsrb&amp;subsection=dataset</a></p>
+<p>Here are seven German traffic signs that I found on the web:<br>
+<img src="./found_signs/00001.jpg" alt=" " title="30kph"><img src="./found_signs/00006.jpg" alt=" " title="caution"><img src="./found_signs/00009.jpg" alt=" " title="geradeaus"><img src="./found_signs/00021.jpg" alt=" " title="rechts"><img src="./found_signs/00057.jpg" alt=" " title="ampeln"><img src="./found_signs/00111.jpg" alt=" " title="stop"><img src="./found_signs/00115.jpg" alt=" " title="60kph"></p>
+<h4 id="model-performance-on-downloaded-signs">2. Model Performance on Downloaded Signs</h4>
+<p>Here are the results of the prediction:</p>
+
+<table>
+<thead>
+<tr>
+<th align="center">Image</th>
+<th align="center">Prediction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">30 kph</td>
+<td align="center">30 kph</td>
+</tr>
+<tr>
+<td align="center">caution</td>
+<td align="center">U-turn</td>
+</tr>
+<tr>
+<td align="center">straight</td>
+<td align="center">straight</td>
+</tr>
+<tr>
+<td align="center">right</td>
+<td align="center">right</td>
+</tr>
+<tr>
+<td align="center">signals</td>
+<td align="center">signals</td>
+</tr>
+<tr>
+<td align="center">60 kpn</td>
+<td align="center">60 kph</td>
+</tr>
+</tbody>
+</table><p>The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of …</p>
+<h4 id="predicition-certainty">3. Predicition Certainty</h4>
+<p>The code for making predictions on my final model is located in the 2h cell of the Ipython notebook.</p>
+<p>As can be seen from the following the model is highly certain (1.0). This is doubtless a consequence of picking images that were sharp and well lit. It is interesting to know that not all of the  lower 4 predictions are zero. Some of them are very small non zero values.<br>
+[[1.00000e+00 1.45429e-24 7.08256e-35 0.00000e+00 0.00000e+00]<br>
+[1.00000e+00 1.84673e-38 0.00000e+00 0.00000e+00 0.00000e+00]<br>
+[1.00000e+00 1.04243e-22 9.17256e-32 8.08734e-32 5.27130e-32]<br>
+[1.00000e+00 0.00000e+00 0.00000e+00 0.00000e+00 0.00000e+00]<br>
+[1.00000e+00 0.00000e+00 0.00000e+00 0.00000e+00 0.00000e+00]<br>
+[1.00000e+00 0.00000e+00 0.00000e+00 0.00000e+00 0.00000e+00]<br>
+[1.00000e+00 0.00000e+00 0.00000e+00 0.00000e+00 0.00000e+00]]</p>
+</div>
+</body>
+
+</html>
